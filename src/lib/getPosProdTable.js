@@ -1,0 +1,78 @@
+const sql = require("mssql");
+const conn = require("./../conn");
+
+module.exports = function(num) {
+    return new Promise((resolve, reject) => {
+        new sql.Request(conn)
+            .input("numColis", sql.NVarChar, num)
+            .query(`select
+                POS.OTSID as idPosition,
+                POS.OTSNUM as numPosition,
+                POS.OTSREF as refClient,
+                POS.OTSCOL as nbColis,
+                POS.OTSPAL as nbPalette,
+                POS.OTSPDS as poids,
+                COALESCE(POS.OTSLONG, 0) as ml,
+                COALESCE(POS.OTSDIV2, 0) as col,
+                COALESCE(POS.OTSUNI03, 0) as colisSurPal,
+                COALESCE(POS.OTSDTLIM, CAST('1900-01-01 00:00' AS DATETIME)) as dateImpLiv,
+                POS.OTSTIENOM as clientNom,
+                POS.OTSREMITTIENOM as expediteurNom,
+                POS.OTSREMITADR1 as expediteurAdresse,
+                POS.OTSREMITVILLIB as expediteurVille,
+                POS.OTSREMITVILCP as expediteurCp,
+                POS.OTSTIENOM as chargementNom,
+                POS.OTSDEPADR1 as chargementAdresse,
+                POS.OTSDEPUSRVILLIB as chargementVille,
+                POS.OTSDEPUSRVILCP as chargementCp,
+                POS.OTSARRNOM as livraisonNom,
+                POS.OTSARRADR1 as livraisonAdresse,
+                POS.OTSARRUSRVILLIB as livraisonVille,
+                POS.OTSARRUSRVILCP as livraisonCp,
+                QUALIBL1 AS zoneQuaiTheorique
+                from dbo.ORDRE as POS, dbo.ORDCOL as COL ,  QUAI,TOURNEEVILLE
+                where POS.OTSID = COL.OTLOTSID
+                AND COL.OTLNUMCB=@numColis
+                AND POS.OTSSOCCODE like 'STJ25%'
+                AND  otsarrvilid*= TOUVILID AND OTSVPECODE*=QUAVTOCODE and QUASOCCODE='STJ25'
+                UNION
+                select
+                POS.OTSID as idPosition,
+                POS.OTSNUM as numPosition,
+                POS.OTSREF as refClient,
+                POS.OTSCOL as nbColis,
+                POS.OTSPAL as nbPalette,
+                POS.OTSPDS as poids,
+                POS.OTSLONG as ml,
+                POS.OTSDIV2 as col,
+                POS.OTSUNI03 as colisSurPal,
+                POS.OTSDTLIM as dateImpLiv,
+                POS.OTSTIENOM as clientNom,
+                POS.OTSREMITTIENOM as expediteurNom,
+                POS.OTSREMITADR1 as expediteurAdresse,
+                POS.OTSREMITVILLIB as expediteurVille,
+                POS.OTSREMITVILCP as expediteurCp,
+                POS.OTSTIENOM as chargementNom,
+                POS.OTSDEPADR1 as chargementAdresse,
+                POS.OTSDEPUSRVILLIB as chargementVille,
+                POS.OTSDEPUSRVILCP as chargementCp,
+                POS.OTSARRNOM as livraisonNom,
+                POS.OTSARRADR1 as livraisonAdresse,
+                POS.OTSARRUSRVILLIB as livraisonVille,
+                POS.OTSARRUSRVILCP as livraisonCp,
+                QUALIBL1 as zoneQuaiTheorique
+                from dbo.ORDRE as POS, dbo.ORDCOL as COL ,  QUAI,TOURNEEVILLE
+                where POS.OTSID = COL.OTLOTSID
+                AND otsarrvilid*= TOUVILID AND OTSVPECODE*=QUAVTOCODE and QUASOCCODE='STJ25'
+                AND POS.OTSNUM=@numColis
+                AND POS.OTSSOCCODE like 'STJ25%';`,
+                (err, recordset) => {
+                    if (err) {
+                        reject(err);
+                    }
+                    resolve(recordset);
+                });
+    });
+};
+
+// AND POS.OTSSOCCODE like 'STJ25%'
