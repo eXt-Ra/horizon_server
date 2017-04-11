@@ -36,3 +36,17 @@ build/
 files/
 
 \.DS_Store
+
+icoevents/
+
+numColis\.csv
+
+src/\.scannerwork/
+
+src/sonar-project\.properties
+
+sslcert/
+
+startServer\.json
+
+testServerDCS\.yml
