@@ -1,5 +1,4 @@
-const storage = require("node-persist");
-module.exports = function(num) {
+module.exports = function(num, storage) {
     return new Promise( (resolve,reject) => {
         try {
             storage.values().forEach( pos => {

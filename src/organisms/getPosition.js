@@ -11,7 +11,7 @@ module.exports = (router, console, storage) =>{
     router.get("/:action/:user/:numColis", (req, res) => {
         //is in storage
         let newStorage = {};
-        getPosStorage(req.params.numColis)
+        getPosStorage(req.params.numColis, storage)
             .then(resStore => {
                 if (resStore != undefined) {
                     console.tag({

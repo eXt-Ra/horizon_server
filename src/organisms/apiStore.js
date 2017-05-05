@@ -1,31 +1,35 @@
-
-module.exports = (router, console, storage) =>{
-//GET STORE
-    router.get("/store", (req, res) => {
-        res.json(storage.values());
+module.exports = (router, console, storePos) => {
+    //GET STOREPOS
+    router.get("/storePos", (req, res) => {
+        res.json(storePos.values());
     });
 
-//clear STORE
-    router.get("/store/clear", (req, res) => {
-        storage.clear()
-    .then(err =>{
-        if (err) {
-            res.send(err);
-        }
-        console.tag("STORE").time().file().info("CLEAR");
-        res.send("ok");
-    });
+    // //GET STORECHARG
+    // router.get("/storeCharg", (req, res) => {
+    //     res.json(storeCharg.values());
+    // });
+
+    //clear STOREPOS
+    router.get("/storePos/clear", (req, res) => {
+        storePos.clear()
+            .then(err => {
+                if (err) {
+                    res.send(err);
+                }
+                console.tag("STOREPOS").time().file().info("CLEAR");
+                res.send("ok");
+            });
     });
 
-//REMOVE STORE
-    router.get("/store/remove/:numPosition", (req, res) => {
-        storage.removeItem(req.params.numPosition)
-    .then(err =>{
-        if (err) {
-            res.send(err);
-        }
-        console.tag("STORE").time().file().info(`Remove ${req.params.numPosition}`);
-        res.send("ok");
-    });
+    //REMOVE STOREPOS
+    router.get("/storePos/remove/:numPosition", (req, res) => {
+        storePos.removeItem(req.params.numPosition)
+            .then(err => {
+                if (err) {
+                    res.send(err);
+                }
+                console.tag("STOREPOS").time().file().info(`Remove ${req.params.numPosition}`);
+                res.send("ok");
+            });
     });
 };
