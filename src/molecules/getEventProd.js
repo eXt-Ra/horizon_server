@@ -4,7 +4,7 @@ module.exports = function(idPosition) {
     return new Promise((resolve, reject) => {
         new sql.Request(conn)
             .input("idPosition", sql.Int, idPosition)
-            .query(`select top 3
+            .query(`select
                     OTETEVCODE as code,
                     OTETEVLIBCL1 as libelle,
                     OTEDATE as date,

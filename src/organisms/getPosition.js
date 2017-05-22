@@ -1,5 +1,7 @@
 const getPosProdTable = require("./../molecules/getPosProdTable");
+const getPosOnlyColisProdTable = require("./../molecules/getPosOnlyColisProdTable");
 const getPosTempTable = require("./../molecules/getPosTempTable");
+const getPosOnlyColisTempTable = require("./../molecules/getPosOnlyColisTempTable");
 const getPosStorage = require("./../molecules/getPosStorage");
 const getColisProdTable = require("./../molecules/getColisProdTable");
 const getColisTempTable = require("./../molecules/getColisTempTable");
@@ -22,12 +24,16 @@ module.exports = (router, console, storage) =>{
                         user: req.params.user
                     });
                     if (req.params.action != "infocolis") {
-                        traitColis(req.params.numColis, req.params.action, req.params.user, req.query.zone);
+                        traitColis(req.params.numColis, req.params.action, req.params.user, req.query.zone,storage);
                     }
                     res.json(resStore);
                 } else {
                     // is position in tempTable
-                    return getPosTempTable(req.params.numColis, req.query.societe);
+                    if (req.params.action == "chargement") {
+                        return getPosOnlyColisTempTable(req.params.numColis, req.query.societe);
+                    }else {
+                        return getPosTempTable(req.params.numColis, req.query.societe);
+                    }
                 }
             })
             .then(resPos => {
@@ -38,7 +44,11 @@ module.exports = (router, console, storage) =>{
                             colors: ["italic", "magenta", "bold"]
                         }).time().file().info(`no result ${req.params.numColis} par ${req.params.user}`);
                     // is position in prodTable
-                        return getPosProdTable(req.params.numColis, req.query.societe);
+                        if (req.params.action == "chargement") {
+                            return getPosOnlyColisProdTable(req.params.numColis, req.query.societe);
+                        }else {
+                            return getPosProdTable(req.params.numColis, req.query.societe);
+                        }
                     } else {
                         newStorage = resPos[0];
                     //load colis sql temp
@@ -53,7 +63,7 @@ module.exports = (router, console, storage) =>{
                             storage.setItem(newStorage.numPosition, newStorage)
                                 .then(() => {
                                     if (req.params.action != "infocolis") {
-                                        traitColis(req.params.numColis, req.params.action, req.params.user, req.query.zone);
+                                        traitColis(req.params.numColis, req.params.action, req.params.user, req.query.zone,storage);
                                     }
                                 });
                             console.tag({
@@ -92,7 +102,7 @@ module.exports = (router, console, storage) =>{
                             storage.setItem(newStorage.numPosition, newStorage)
                                 .then(() => {
                                     if (req.params.action != "infocolis") {
-                                        traitColis(req.params.numColis, req.params.action, req.params.user, req.query.zone);
+                                        traitColis(req.params.numColis, req.params.action, req.params.user, req.query.zone, storage);
                                     }
                                 });
                             console.tag({

@@ -1,9 +1,9 @@
 "use strict";
-const storage = require("node-persist");
 const moment = require("moment");
 const console = process.console;
+const postEventAnd = require("./postEventAnd");
 
-module.exports = function(num, action) {
+module.exports = function(num, action, storage) {
     return new Promise((resolve,reject) => {
         try {
             storage.values().forEach(pos => {
@@ -53,7 +53,15 @@ module.exports = function(num, action) {
                             //si EventDoneAt not à la date du jours ou inexistant > faire l'event
                                 if (pos.DechargementEventDoneAt == undefined || !(moment(pos.DechargementEventDoneAt).isSame(moment().format(), "day"))) {
                                     pos.DechargementEventDoneAt = moment().format();
-                                // TODO creation de l'event
+                                    //si il a eu un autre event ne rien faire
+                                    const sch = pos.evenement.find((o)=>{
+                                        return o.source == "DCS";
+                                    });
+
+                                    if (sch == undefined) {
+                                        postEventAnd("AARCFM","","", "", pos.idPosition);
+                                    }
+                                    
                                     console.tag({
                                         msg: `EVENT_FULL | ${action}`,
                                         colors: ["magenta", "bgYellow", "bold"]
@@ -69,7 +77,15 @@ module.exports = function(num, action) {
                             //si EventDoneAt not à la date du jours ou inexistant > faire l'event
                                 if (pos.InventaireEventDoneAt == undefined || !(moment(pos.InventaireEventDoneAt).isSame(moment().format(), "day"))) {
                                     pos.InventaireEventDoneAt = moment().format();
-                                // TODO creation de l'event
+
+                                    const sch = pos.evenement.find((o)=>{
+                                        return o.code == "AARCFM";
+                                    });
+
+                                    if (sch == undefined) {
+                                        postEventAnd("AARCFM","","", "", pos.idPosition);
+                                    }
+
                                     console.tag({
                                         msg: `EVENT_FULL | ${action}`,
                                         colors: ["magenta", "bgYellow", "bold"]

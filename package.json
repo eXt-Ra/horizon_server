@@ -12,6 +12,7 @@
     "test": "test"
   },
   "dependencies": {
+    "axios": "^0.16.1",
     "backpack-core": "^0.2.0",
     "body-parser": "^1.16.0",
     "busboy": "^0.2.14",
@@ -19,6 +20,7 @@
     "connect-busboy": "0.0.2",
     "express": "^4.14.1",
     "formidable": "^1.1.1",
+    "ftp": "^0.3.10",
     "helmet": "^3.5.0",
     "jfs": "^0.2.6",
     "jsonwebtoken": "^7.4.0",
@@ -27,6 +29,7 @@
     "mongoose": "^4.9.7",
     "mssql": "^3.3.0",
     "nodemailer": "^3.1.8",
+    "request": "^2.81.0",
     "scribe-js": "^2.0.4",
     "socket.io": "^1.7.2"
   },

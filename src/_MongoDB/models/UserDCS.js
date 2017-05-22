@@ -3,7 +3,6 @@ const Schema = mongoose.Schema;
 
 const userDcsSchema = new Schema({
     code: { type: String, required: true, unique: true },
-    numeroPermis: { type: String, required: true, unique: true },
     societe: { type: String, required: true},
     connected: Boolean,
     lastConn: Date,

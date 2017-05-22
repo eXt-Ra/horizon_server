@@ -7,8 +7,9 @@ module.exports = (router, console) =>{
         new Promise((resolve, reject) => {
             new sql.Request(conn)
             .query(`select
-                    TEVLIBCL1 as code,
-                    TEVLIBL1 as libelle
+                    TEVCODE as code,
+                    TEVLIBL1 as libelle,
+                    TEVLIBCL1 as codelib
                     from OTETYPE where TEVQUAI = 1`,
                 (err, recordset) => {
                     if (err) {

@@ -6,7 +6,7 @@ const UserDcs = require("./../_MongoDB/models/userdcs");
 module.exports = (router, console) =>{
     router.get("/salarie/:val", (req, res) => {
         new sql.Request(conn).input("val", sql.NVarChar, req.params.val)
-            .query("SELECT TOP 1 SALCODE,SALNUMPERMIS, SALSOCCODE FROM SALARIE WHERE SALCODE=@val OR SALNUMPERMIS=@val", function(err, recordset) {
+            .query("SELECT TOP 1 SALCODE, SALSOCCODE FROM SALARIE WHERE SALCODE=@val OR SALNUMPERMIS=@val", function(err, recordset) {
                 if (err) {
                     console.tag("SALARIE").time().file().error(err);
                     res.status(500).send(err);
@@ -38,7 +38,6 @@ module.exports = (router, console) =>{
 
                             const newuser = new UserDcs({
                                 code: recordset[0].SALCODE,
-                                numeroPermis: recordset[0].SALNUMPERMIS,
                                 societe: recordset[0].SALSOCCODE,
                                 connected:true
                             });

@@ -17,6 +17,7 @@ module.exports = (router, console) =>{
             zone: zone,
             positions: []
         });
+
         newCharg.save(function(err) {
             if (err) throw err;
 

@@ -1,7 +1,8 @@
-const storage = require("node-persist");
 const moment = require("moment");
+const _ = require("lodash");
+const postEventAnd = require("./postEventAnd");
 
-module.exports = function(num, action, user, zone) {
+module.exports = function(num, action, user, zone, storage) {
     return new Promise((resolve,reject) => {
         try {
             storage.values().forEach( pos => {
@@ -18,6 +19,18 @@ module.exports = function(num, action, user, zone) {
                             cb.zoneDeQuai = zone;
                             break;
                         case "inventaire":
+                            var schColis = _.find(pos.codebarre, (o) => {
+                                return moment(o.dateInventaire).isSame(moment().format(), "day") && o.zoneDeQuai == zone;
+                            });
+                            if (schColis == undefined) {
+                                postEventAnd("INVQUAI","INVQUAI",zone, user, pos.idPosition);
+                                // .then((data)=>{
+                                //     console.log(data);
+                                // }).catch((err) =>{
+                                //     console.log(err);
+                                // });
+                            }
+
                             cb.dateInventaire = moment().format();
                             cb.quiInventaire = user;
                             cb.zoneDeQuai = zone;
