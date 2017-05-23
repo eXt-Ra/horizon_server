@@ -29,7 +29,7 @@ module.exports = function(num, societe) {
                           OTSARRADR1 as livraisonAdresse,
                           OTSARRUSRVILLIB as livraisonVille,
                           OTSARRUSRVILCP as livraisonCp,
-                          QUALIBL1 as zoneDeQuaiTheorique
+                          QUALIBL1 as zoneQuaiTheorique
                           from QUAI_${societe}
                           where OTLNUMCB=@numColis
                           UNION
@@ -57,7 +57,7 @@ module.exports = function(num, societe) {
                           OTSARRADR1 as livraisonAdresse,
                           OTSARRUSRVILLIB as livraisonVille,
                           OTSARRUSRVILCP as livraisonCp,
-                          QUALIBL1 as zoneDeQuaiTheorique
+                          QUALIBL1 as zoneQuaiTheorique
                           from QUAI_${societe}
                           WHERE OTSNUM=@numColis;`,
                           (err, recordset) => {

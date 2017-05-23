@@ -10,7 +10,8 @@ module.exports = (router, console) =>{
                     TEVCODE as code,
                     TEVLIBL1 as libelle,
                     TEVLIBCL1 as codelib
-                    from OTETYPE where TEVQUAI = 1`,
+                    from OTETYPE where TEVQUAI = 1
+                    and TEVACTIF=1`,
                 (err, recordset) => {
                     if (err) {
                         console.tag("EVENTS").time().file().error(err);

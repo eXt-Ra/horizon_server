@@ -50,3 +50,5 @@ sslcert/
 startServer\.json
 
 testServerDCS\.yml
+
+storePos/

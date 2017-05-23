@@ -7,12 +7,13 @@ const request = require("request");
 //SOCKET
 module.exports = (io, console, storePos) =>{
     io.on("connection", function(socket) {
-        console.tag("SOCKET").time().file().info(`Connect! ${socket.id}`);
+        // console.tag("SOCKET").time().file().info(`Connect! ${socket.id}`);
         socket.on("handshake", handshake => {
             if (handshake.plateforme == "smartphone") {
                 UserDcs.findOne({
                     code: handshake.user
                 }, (err, user) => {
+                    // io.to(user.socketId).emit("logout");
                     user.socketId = socket.id;
                     console.tag("SOCKET").time().file().info(`USER : ${handshake.user} CONN`);
                     socket.join("smart");
@@ -305,7 +306,7 @@ module.exports = (io, console, storePos) =>{
         });
 
         socket.on("disconnect", () => {
-            console.tag("SOCKET").time().file().info(`Got disconnect! ${socket.id}`);
+            // console.tag("SOCKET").time().file().info(`Got disconnect! ${socket.id}`);
             UserDcs.findOne({
                 socketId: socket.id
             }, (err, user) => {

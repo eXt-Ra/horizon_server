@@ -55,13 +55,13 @@ module.exports = function(num, action, storage) {
                                     pos.DechargementEventDoneAt = moment().format();
                                     //si il a eu un autre event ne rien faire
                                     const sch = pos.evenement.find((o)=>{
-                                        return o.source == "DCS";
+                                        return o.source == "DCS" && (o.code.indexOf("AAR") > -1);
                                     });
-
+                                    console.log(sch);
                                     if (sch == undefined) {
                                         postEventAnd("AARCFM","","", "", pos.idPosition);
                                     }
-                                    
+
                                     console.tag({
                                         msg: `EVENT_FULL | ${action}`,
                                         colors: ["magenta", "bgYellow", "bold"]
