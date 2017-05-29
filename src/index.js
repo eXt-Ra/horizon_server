@@ -104,6 +104,8 @@ require("./molecules/getIcoEvents")(router, console);
 require("./molecules/postEvent")(router, console, storePos);
 require("./organisms/getInfoGroupage")(router, console);
 require("./molecules/createChargement")(router, console);
+require("./molecules/createConfig")(router, console);
+require("./molecules/getConfig")(router, console);
 require("./molecules/chargementExist")(router);
 require("./molecules/userInChargement")(router);
 
