@@ -6,6 +6,7 @@ const busboy = require("connect-busboy");
 const scribe = require("scribe-js")();
 const console = process.console;
 const storage = require("node-persist");
+const UserDcs = require("./_MongoDB/models/userdcs");
 
 app.use(helmet());
 
@@ -116,6 +117,17 @@ app.listen(port);
 
 app.use("/logs", scribe.webPanel());
 app.use(scribe.express.logger());
+
+//disconnect all user
+UserDcs.find({}, (err, users) => {
+    if (err) throw err;
+    users.forEach(user => {
+        user.connected = false;
+        user.save((err) => {
+            if (err) throw err;
+        });
+    });
+});
 
 console.tag({
     msg: "START",

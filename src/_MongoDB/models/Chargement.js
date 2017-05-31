@@ -10,6 +10,7 @@ const chargementSchema = new Schema({
     logs: Array,
     positions: Array,
     users: Array,
+    groupage: String,
     societe: { type: String, required: true},
     zone: { type: String, required: true}
 });

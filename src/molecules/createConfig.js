@@ -23,6 +23,13 @@ module.exports = (router, console) => {
             zoneAlert = false;
         }
 
+        let scanManuel = false;
+
+        if (req.query.scanManuel == "true") {
+            scanManuel = true;
+        }else {
+            scanManuel = false;
+        }
 
         const newConfig = new Config({
             name: name,
@@ -30,7 +37,8 @@ module.exports = (router, console) => {
             isDefault: def,
             chargementMode: chargementMode,
             logoutTime:logoutTime,
-            wrongZoneAlert: zoneAlert
+            wrongZoneAlert: zoneAlert,
+            scanManuel : scanManuel
         });
 
         newConfig.save(function(err) {

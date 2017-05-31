@@ -7,7 +7,8 @@ const configSchema = new Schema({
     isDefault: { type: Boolean, required: true},
     chargementMode: { type: String, required: true},
     logoutTime: { type: String, required: true},
-    wrongZoneAlert: { type: Boolean, required: true}
+    wrongZoneAlert: { type: Boolean, required: true},
+    scanManuel: { type: Boolean, required: true}
 });
 
 const Config = mongoose.model("Config", configSchema);

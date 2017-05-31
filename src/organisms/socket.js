@@ -15,6 +15,8 @@ module.exports = (io, console, storePos) =>{
                 }, (err, user) => {
                     // io.to(user.socketId).emit("logout");
                     user.socketId = socket.id;
+                    const currentDate = new Date();
+                    user.lastConn = currentDate;
                     console.tag("SOCKET").time().file().info(`USER : ${handshake.user} CONN`);
                     socket.join("smart");
                     io.to("desktop").emit("newSmart", user);
@@ -57,6 +59,23 @@ module.exports = (io, console, storePos) =>{
                         user: user,
                         date: moment().format()
                     });
+                    const s = charg.users.find(u =>{
+                        return u.user === user;
+                    });
+                    console.log(s);
+                    if (s != undefined) {
+                        Chargement.update({
+                            token: token
+                        }, {
+                            $pull: {
+                                users: {
+                                    user: user
+                                }
+                            }
+                        }, (err, val) => {
+                            console.log(val);
+                        });
+                    }
                     charg.users.push({
                         user: user,
                         date: moment().format()
@@ -83,6 +102,7 @@ module.exports = (io, console, storePos) =>{
                         user: user,
                         date: moment().format()
                     });
+
                     Chargement.update({
                         token: token
                     }, {
@@ -91,10 +111,9 @@ module.exports = (io, console, storePos) =>{
                                 user: user
                             }
                         }
-                    },
-            (err, val) => {
-                console.log(val);
-            });
+                    }, (err, val) => {
+                        console.log(val);
+                    });
                     socket.emit("leaveChargement_Notif");
                     console.tag("SOCKET").time().file().info(`leaveChargement ${token} / ${user}`);
                 }
@@ -111,7 +130,9 @@ module.exports = (io, console, storePos) =>{
                     storePos.getItem(numpos).then(pos => {
                         const newPos = new Position(pos);
                         newPos.save(function(err) {
-                            if (err) throw err;
+                            if (err){
+                                console.tag("SOCKET").time().file().error(`CHA.addPos Position en double ${numpos} / ${user}`);
+                            }
                         });
 
                         charg.positions.push(newPos.numPosition);
@@ -271,34 +292,52 @@ module.exports = (io, console, storePos) =>{
                         user: user,
                         date: moment().format()
                     });
-                    charg.status = "close";
                     console.tag("SOCKET").time().file().info(`CHA.Cloture Cloture de  ${token} / ${user}`);
-                    Chargement.remove({
-                        token: token
-                    });
-                    charg.token = `${token}_${moment().format("ddd-Do-kk:mm")}`;
-                    charg.save(function(err) {
-                        if (err) throw err;
-                        const options = {
-                            method: "POST",
-                            url: "http://10.1.2.70/DCSAPP/api/creaeve",
-                            headers: {
-                                "cache-control": "no-cache",
-                                "content-type": "application/json",
-                                "x-access-token": "w25K}54dkaE/[dgduVqcX9VicQF17u"
-                            },
-                            body: {
-                                GRPQUIC: user,
-                                GRPPORTE: zone,
-                                GRPCOMMANDE: commande
-                            },
-                            json: true
+                    const data = [];
+                    JSON.parse(commande).forEach(pos =>{
+                        const newdata = {
+                            OTSID: pos.idPosition,
+                            OTSNUM: pos.numPosition
                         };
-                        request(options, function(error, response, body) {
-                            if (error) throw new Error(error);
-                            console.log(body);
-                        });
+                        data.push(newdata);
                     });
+                    console.log({
+                        GRPQUIC: user,
+                        GRPPORTE: zone,
+                        GRPCOMMANDE: data
+                    });
+                    const options = {
+                        method: "POST",
+                        url: "http://10.1.2.70/DCSAPP/api/creagrp",
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                        body: {
+                            GRPQUIC: user,
+                            GRPPORTE: zone,
+                            GRPCOMMANDE: data
+                        },
+                        json: true
+                    };
+                    request(options, function(error, response, body) {
+                        if (error) throw new Error(error);
+                        console.log(body);
+                        if (body != "0") {
+                            charg.status = "close";
+                            charg.token = `${token}_${body}`;
+                            charg.groupage = body;
+                            charg.save(err => {
+                                if (err) throw err;
+                            });
+                        }else {
+                            charg.status = "erreur";
+                            charg.token = `${token}_${moment().format("ddd-Do-kk:mm")}_err`;
+                            charg.save(err => {
+                                if (err) throw err;
+                            });
+                        }
+                    });
+
                 }
             }).catch(err => {
                 if (err) throw err;

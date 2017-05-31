@@ -12,7 +12,7 @@ const userDcsSchema = new Schema({
 
 userDcsSchema.pre("save", function(next) {
     const currentDate = new Date();
-    this.lastConn = currentDate;
+    // this.lastConn = currentDate;
       // if created_at doesn't exist, add to that field
     if (!this.firstConn)
         this.firstConn = currentDate;
