@@ -7,6 +7,7 @@ const scribe = require("scribe-js")();
 const console = process.console;
 const storage = require("node-persist");
 const UserDcs = require("./_MongoDB/models/userdcs");
+const sendMail = require("./mail/nodemailer");
 
 app.use(helmet());
 
@@ -77,7 +78,8 @@ router.use(function(req, res, next) {
 //Store position Andsoft
 const storePos = storage.create({
     dir: "storePos",
-    ttl: true
+    ttl: true,
+    expiredInterval: 2 * 60 * 1000
 });
 
 storePos.init()
@@ -133,3 +135,13 @@ console.tag({
     msg: "START",
     colors: ["italic", "green", "bold"]
 }).time().file().info(`Magic happens on port ${port}`);
+
+// const startMail = require("./mail/startMail");
+//
+// sendMail(startMail)
+// .then(res => {
+//     console.log(res.accepted);
+// })
+// .catch(err =>{
+//     console.log(err);
+// });

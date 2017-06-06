@@ -1,6 +1,8 @@
 const UserDcs = require("./../_MongoDB/models/userdcs");
 const Chargement = require("./../_MongoDB/models/chargement");
 const {Position} = require("./../_MongoDB/models/position");
+const sendMail = require("./../mail/nodemailer");
+const chargementErreur = require("./../mail/chargementErreur");
 const moment = require("moment");
 const request = require("request");
 
@@ -135,7 +137,7 @@ module.exports = (io, console, storePos) =>{
                             }
                         });
 
-                        charg.positions.push(newPos.numPosition);
+                        charg.positions.unshift(newPos.numPosition);
                         charg.logs.push({
                             type: "addPos",
                             user: user,
@@ -334,6 +336,7 @@ module.exports = (io, console, storePos) =>{
                             charg.token = `${token}_${moment().format("ddd-Do-kk:mm")}_err`;
                             charg.save(err => {
                                 if (err) throw err;
+                                sendMail(chargementErreur(charg.zone,charg.societe, charg.userCrea));
                             });
                         }
                     });
@@ -341,6 +344,24 @@ module.exports = (io, console, storePos) =>{
                 }
             }).catch(err => {
                 if (err) throw err;
+            });
+        });
+
+        socket.on("forcedisconnect", (user) => {
+            // console.tag("SOCKET").time().file().info(`Got disconnect! ${socket.id}`);
+            UserDcs.findOne({
+                code: user
+            }, (err, user) => {
+                if (err) throw err;
+                if (user != null) {
+                    user.connected = false;
+                    user.save((err) => {
+                        if (err) throw err;
+                        console.tag("SOCKET FORCE DISCONN").time().file().info(`USER : ${user.code} FORCE DISCONN`);
+                        io.to("desktop").emit("suppSmart", user.code);
+                        io.to(user.socketId).emit("forcedisconnect_Notif");
+                    });
+                }
             });
         });
 

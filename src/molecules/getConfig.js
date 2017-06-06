@@ -63,10 +63,6 @@ module.exports = (router, console) =>{
                 }else {
                     Config.find({}).then((configs) => {
                         if (configs != null) {
-                            console.tag({
-                                msg: "CONFIG",
-                                colors: ["italic", "GREEN", "bold"]
-                            }).time().file().info("Config get All List");
                             res.json(configs);
                         } else {
                             res.send("NotExist");

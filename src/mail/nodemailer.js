@@ -1,4 +1,3 @@
-const mail = require("./startMail");
 const nodemailer = require("nodemailer");
 
 const smtpConfig = {
@@ -12,4 +11,18 @@ const smtpConfig = {
 };
 const transporter = nodemailer.createTransport(smtpConfig);
 
-transporter.sendMail(mail.mailOptions);
+
+
+    // transporter.sendMail(mail.mailOptions);
+
+module.exports = mail => {
+    return new Promise((resolve, reject) => {
+        transporter.sendMail(mail,(err, info) =>{
+            if (err) {
+                reject(err);
+            }else {
+                resolve(info);
+            }
+        });
+    });
+};

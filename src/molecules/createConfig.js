@@ -5,6 +5,8 @@ module.exports = (router, console) => {
         const name = req.query.name;
         const societe = req.query.societe;
         const chargementMode = req.query.typechargement;
+        const dechargementMode = req.query.typedechargement;
+        const inventaireMode = req.query.typeinventaire;
         const logoutTime = req.query.logoutTime;
 
         let def = false;
@@ -36,6 +38,8 @@ module.exports = (router, console) => {
             societe: societe,
             isDefault: def,
             chargementMode: chargementMode,
+            dechargementMode: dechargementMode,
+            inventaireMode: inventaireMode,
             logoutTime:logoutTime,
             wrongZoneAlert: zoneAlert,
             scanManuel : scanManuel
@@ -43,7 +47,7 @@ module.exports = (router, console) => {
 
         newConfig.save(function(err) {
             if (err){
-                res.status(500).send(err.errmsg);
+                res.status(500).send(err);
                 console.tag({
                     msg: "CONFIG",
                     colors: ["italic", "GREEN", "bold"]
@@ -56,6 +60,71 @@ module.exports = (router, console) => {
                 res.send("Config Creation Done");
             }
         });
+
+    });
+
+    router.post("/config/update", (req, res) => {
+        const name = req.query.name;
+        const societe = req.query.societe;
+        const chargementMode = req.query.typechargement;
+        const dechargementMode = req.query.typedechargement;
+        const inventaireMode = req.query.typeinventaire;
+        const logoutTime = req.query.logoutTime;
+
+        let def = false;
+
+        if (req.query.default == "true") {
+            def = true;
+        }else {
+            def = false;
+        }
+
+        let zoneAlert = false;
+
+        if (req.query.wrongZoneAlert == "true") {
+            zoneAlert = true;
+        }else {
+            zoneAlert = false;
+        }
+
+        let scanManuel = false;
+
+        if (req.query.scanManuel == "true") {
+            scanManuel = true;
+        }else {
+            scanManuel = false;
+        }
+
+        Config.update(
+            {
+                name: name
+            },
+            {
+                $set: {
+                    "societe": societe,
+                    "isDefault": def,
+                    "chargementMode": chargementMode,
+                    "dechargementMode": dechargementMode,
+                    "inventaireMode": inventaireMode,
+                    "logoutTime":logoutTime,
+                    "wrongZoneAlert": zoneAlert,
+                    "scanManuel" : scanManuel
+                }
+            }, (err) => {
+                if (err){
+                    res.status(500).send(err);
+                    console.tag({
+                        msg: "CONFIG UPDATE",
+                        colors: ["italic", "GREEN", "bold"]
+                    }).time().file().error(err);
+                }else {
+                    console.tag({
+                        msg: "CONFIG UPDATE",
+                        colors: ["italic", "GREEN", "bold"]
+                    }).time().file().info(`Config Update Done token = ${name}-${societe}`);
+                    res.send("Config Update Done");
+                }
+            });
 
     });
 };
