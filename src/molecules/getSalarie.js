@@ -21,8 +21,28 @@ module.exports = (router, console) =>{
                         if (err) throw err;
                         if (user != null) {
                             if (user.connected) {
-                                console.tag("SALARIE").time().file().info(`${recordset[0].SALCODE} already connected`);
-                                res.status(409).send("User already connected");
+                                if (req.query.serial != undefined) {
+                                    if (req.query.serial == user.serial) {
+                                        console.tag("SALARIE").time().file().info(`serial corrrespond ${req.query.serial}`);
+                                        console.tag("SALARIE").time().file().info(req.params.val);
+                                        res.status(200).json(recordset);
+                                        user.lastConn = new Date();
+                                        user.save((err) => {
+                                            if (err) throw err;
+                                        });
+                                    }else {
+                                        console.tag("SALARIE").time().file().info(`${recordset[0].SALCODE} already connected`);
+                                        res.status(409).send("User already connected");
+                                    }
+                                }else {
+                                    console.tag("SALARIE").time().file().info(`NO serial provided / ${recordset[0].SALCODE}`);
+                                    console.tag("SALARIE").time().file().info(req.params.val);
+                                    res.status(200).json(recordset);
+                                    user.lastConn = new Date();
+                                    user.save((err) => {
+                                        if (err) throw err;
+                                    });
+                                }
                             }else {
                                 console.tag("SALARIE").time().file().info(req.params.val);
                                 res.status(200).json(recordset);

@@ -7,7 +7,8 @@ const userDcsSchema = new Schema({
     connected: Boolean,
     lastConn: Date,
     firstConn: Date,
-    socketId : String
+    socketId : String,
+    serial : String
 });
 
 userDcsSchema.pre("save", function(next) {

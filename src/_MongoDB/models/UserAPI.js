@@ -5,6 +5,9 @@ const userApiSchema = new Schema({
     name: { type: String, required: true, unique: true },
     token: { type: String, required: true, unique: true },
     societe: { type: String, required: true},
+    active: { type: Boolean, required: true},
+    nbRequest: Number,
+    type: String,
     created_at: Date,
     updated_at: Date
 });

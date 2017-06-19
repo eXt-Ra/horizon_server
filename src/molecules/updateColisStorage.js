@@ -24,11 +24,14 @@ module.exports = function(num, action, user, zone, storage) {
                             });
                             if (schColis == undefined) {
                                 postEventAnd("INVQUAI","INVQUAI",zone, user, pos.idPosition);
-                                // .then((data)=>{
-                                //     console.log(data);
-                                // }).catch((err) =>{
-                                //     console.log(err);
-                                // });
+                                pos.evenement.push({
+                                    "information":"",
+                                    "remarque":zone,
+                                    "date": moment().format(),
+                                    "libelle":"INVQUAI",
+                                    "code":"INVQUAI",
+                                    "source":"DCS"
+                                });
                             }
 
                             cb.dateInventaire = moment().format();

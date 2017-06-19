@@ -192,7 +192,7 @@ module.exports = (porte, societe, user) => {
 
                           <div align="center" class="img-container center" style="padding-right: 0px;  padding-left: 0px;">
       <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-right: 0px; padding-left: 0px;" align="center"><![endif]-->
-        <a href="https://beefree.io" target="_blank">
+        <a href="" target="">
           <img class="center" align="center" border="0" src="http://i.imgur.com/Ms5LrbU.png" alt="Image" title="Image" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block !important;border: none;height: auto;float: none;width: 100%;max-width: 256px" width="256">
         </a>
       <!--[if mso]></td></tr></table><![endif]-->

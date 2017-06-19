@@ -9,18 +9,21 @@ const request = require("request");
 //SOCKET
 module.exports = (io, console, storePos) =>{
     io.on("connection", function(socket) {
-        // console.tag("SOCKET").time().file().info(`Connect! ${socket.id}`);
+        console.tag("SOCKET").time().file().info(`Connect! ${socket.id}`);
         socket.on("handshake", handshake => {
             if (handshake.plateforme == "smartphone") {
                 UserDcs.findOne({
                     code: handshake.user
                 }, (err, user) => {
                     // io.to(user.socketId).emit("logout");
+                    console.tag("SOCKET").time().file().info(`${socket.id} set to ${handshake.user}`);
                     user.socketId = socket.id;
+                    user.serial = handshake.serial;
                     const currentDate = new Date();
                     user.lastConn = currentDate;
                     console.tag("SOCKET").time().file().info(`USER : ${handshake.user} CONN`);
                     socket.join("smart");
+                    socket.emit("handshake_Notif");
                     io.to("desktop").emit("newSmart", user);
                     user.save((err) => {
                         if (err) throw err;
@@ -41,16 +44,19 @@ module.exports = (io, console, storePos) =>{
                 code: user
             }, (err, user) => {
                 if (err) throw err;
-                user.connected = false;
-                console.tag("SOCKET").time().file().info(`USER : ${user.code} DISCONN`);
-                io.to("desktop").emit("suppSmart", user.code);
-                user.save((err) => {
-                    if (err) throw err;
-                });
+                if (user != null) {
+                    user.connected = false;
+                    console.tag("SOCKET").time().file().info(`USER : ${user.code} DISCONN`);
+                    io.to("desktop").emit("suppSmart", user.code);
+                    user.save((err) => {
+                        if (err) throw err;
+                    });
+                }
             });
         });
 
         socket.on("joinChargement", (token, user) => {
+            console.log(`Join Charg de ${token} de ${user} sur ${socket.id}`);
             socket.join(token);
             Chargement.findOne({
                 token: token
@@ -136,13 +142,20 @@ module.exports = (io, console, storePos) =>{
                                 console.tag("SOCKET").time().file().error(`CHA.addPos Position en double ${numpos} / ${user}`);
                             }
                         });
+                        console.log(newPos.numPosition);
+                        if (charg.positions.length == 0) {
+                            charg.positions.push(newPos.numPosition);
+                        }else {
+                            charg.positions.unshift(newPos.numPosition);
+                        }
 
-                        charg.positions.unshift(newPos.numPosition);
                         charg.logs.push({
                             type: "addPos",
                             user: user,
-                            date: moment().format()
+                            date: moment().format(),
+                            info: newPos.numPosition
                         });
+                        console.log(charg);
                         charg.save(function(err) {
                             if (err) throw err;
                             console.tag("SOCKET").time().file().info(`CHA.addPos UPDATE ${token} / ${numpos} / ${user}`);
@@ -178,7 +191,8 @@ module.exports = (io, console, storePos) =>{
                     charg.logs.push({
                         type: "addColisFictif",
                         user: user,
-                        date: moment().format()
+                        date: moment().format(),
+                        info: `${numPosition} / ${nbColisFictif}`
                     });
                     charg.save(function(err) {
                         if (err) throw err;
@@ -196,9 +210,10 @@ module.exports = (io, console, storePos) =>{
             }).then(charg => {
                 if (charg != null) {
                     charg.logs.push({
-                        type: `addCol ${numColis}`,
+                        type: "addCol",
                         user: user,
-                        date: moment().format()
+                        date: moment().format(),
+                        info: numColis
                     });
 
                     Position.update(
@@ -226,20 +241,25 @@ module.exports = (io, console, storePos) =>{
             });
         });
 
-        socket.on("CHA.deletePos", (token, index, user) => {
+        socket.on("CHA.deletePos", (token, numpos, user) => {
             Chargement.findOne({
                 token: token
             }).then(charg => {
                 if (charg != null) {
-                    socket.broadcast.to(token).emit("CHA.deletePos_Notif", charg.positions[index].numPosition);
+                    socket.broadcast.to(token).emit("CHA.deletePos_Notif", numpos);
                     charg.logs.push({
                         type: "deletePos",
-                        posnum: charg.positions[index].numPosition,
                         user: user,
-                        date: moment().format()
+                        date: moment().format(),
+                        info: numpos
                     });
-                    console.tag("SOCKET").time().file().info(`CHA.deletePos Delete de  ${token} / ${charg.positions[index].numPosition} / ${user}`);
-                    charg.positions.splice(index, 1);
+                    console.tag("SOCKET").time().file().info(`CHA.deletePos Delete de  ${token} / ${numpos} / ${user}`);
+                    charg.positions.forEach(item =>{
+                        const i = item.indexOf(numpos);
+                        if(i != -1) {
+                            charg.positions.splice(i, 1);
+                        }
+                    });
                     charg.save(function(err) {
                         if (err) throw err;
                     });
@@ -255,24 +275,24 @@ module.exports = (io, console, storePos) =>{
             }).then(charg => {
                 if (charg != null) {
                     socket.broadcast.to(token).emit("CHA.SwapPos_Notif", {
-                        numA: charg.positions[indexA].numPosition,
-                        numB: charg.positions[indexB].numPosition
+                        numA: charg.positions[indexA],
+                        numB: charg.positions[indexB]
                     });
                     charg.logs.push({
                         type: "SwapPos",
-                        posnum: `${charg.positions[indexA].numPosition} > ${charg.positions[indexB].numPosition}`,
                         user: user,
-                        date: moment().format()
+                        date: moment().format(),
+                        info:`${charg.positions[indexA].numPosition} > ${charg.positions[indexB].numPosition}`,
                     });
                     console.tag("SOCKET").time().file().info(`CHA.SwapPos Swap de  ${token} / ${charg.positions[indexA].numPosition} et ${charg.positions[indexB].numPosition} / ${user}`);
                     charg.positions.forEach(item => {
-                        console.log(item.numPosition);
+                        console.log(item);
                     });
                     const b = charg.positions[indexA];
                     charg.positions[indexA] = charg.positions[indexB];
                     charg.positions[indexB] = b;
                     charg.positions.forEach(item => {
-                        console.log(item.numPosition);
+                        console.log(item);
                     });
                     charg.save(function(err) {
                         if (err) throw err;
@@ -357,7 +377,7 @@ module.exports = (io, console, storePos) =>{
                     user.connected = false;
                     user.save((err) => {
                         if (err) throw err;
-                        console.tag("SOCKET FORCE DISCONN").time().file().info(`USER : ${user.code} FORCE DISCONN`);
+                        console.tag("SOCKET FORCE DISCONN").time().file().info(`SOCKET USER : ${user.code} FORCE DISCONN`);
                         io.to("desktop").emit("suppSmart", user.code);
                         io.to(user.socketId).emit("forcedisconnect_Notif");
                     });
@@ -366,7 +386,7 @@ module.exports = (io, console, storePos) =>{
         });
 
         socket.on("disconnect", () => {
-            // console.tag("SOCKET").time().file().info(`Got disconnect! ${socket.id}`);
+            console.tag("SOCKET").time().file().info(`Got disconnect! ${socket.id}`);
             UserDcs.findOne({
                 socketId: socket.id
             }, (err, user) => {
@@ -375,7 +395,7 @@ module.exports = (io, console, storePos) =>{
                     user.connected = false;
                     user.save((err) => {
                         if (err) throw err;
-                        console.tag("SOCKET").time().file().info(`USER : ${user.code} DISCONN`);
+                        console.tag("SOCKET").time().file().info(`SOCKET USER : ${user.code} DISCONN`);
                         io.to("desktop").emit("suppSmart", user.code);
                     });
                 }

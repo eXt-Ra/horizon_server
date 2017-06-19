@@ -12,7 +12,7 @@ module.exports = (router, console) => {
         chauffeur: {
             nom: "name",
             code: "",
-            imei: 0,
+            serial: 0,
             dms: "smart_"
         },
         dateImport: "",
@@ -32,7 +32,7 @@ module.exports = (router, console) => {
         }).then(result => {
             dataGrp.chauffeur.nom = result[0].nom;
             dataGrp.chauffeur.code = result[0].code;
-            dataGrp.chauffeur.imei = result[0].imei;
+            dataGrp.chauffeur.serial = result[0].serial;
             dataGrp.societe = result[0].nomsociete;
             return getMessageAdmin(result[0].code);
         }).then(result => {

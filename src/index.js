@@ -7,7 +7,6 @@ const scribe = require("scribe-js")();
 const console = process.console;
 const storage = require("node-persist");
 const UserDcs = require("./_MongoDB/models/userdcs");
-const sendMail = require("./mail/nodemailer");
 
 app.use(helmet());
 
@@ -32,9 +31,11 @@ const router = express.Router();
 
 app.get("/setup", (req, res) => {
     var Romain = new UserApi({
-        name: "Romain",
+        name: "romain",
         token: "w25K}54dkaE/[dgduVqcX9VicQF17u",
-        societe: "STJ25"
+        societe: "MJU39",
+        active: true,
+        type: "admin"
     });
     Romain.save(function(err) {
         if (err) throw err;
@@ -70,7 +71,23 @@ router.use(function(req, res, next) {
                 message: "No token provided."
             });
         } else if (user) {
-            next();
+            if (user.active) {
+                console.tag({
+                    msg: "TOKEN",
+                    colors: ["italic", "bgGreen", "bold"]
+                }).time().file().info(`request ${user.token}`);
+                next();
+                if (user.nbRequest != undefined) {
+                    user.nbRequest = user.nbRequest + 1;
+                }else {
+                    user.nbRequest = 1;
+                }
+                user.save((err)=> {
+                    if (err) throw err;
+                });
+            }else {
+                return res.status(403).send("Utilisateur non actif");
+            }
         }
     });
 });
@@ -99,6 +116,7 @@ require("./organisms/getPosition")(router, console, storePos);
 require("./organisms/apiStore")(router, console, storePos);
 require("./organisms/apiMongo")(router);
 require("./molecules/getSalarie")(router, console);
+require("./molecules/requestToken")(router, console);
 require("./molecules/getZone")(router, console);
 require("./molecules/getZones")(router, console);
 require("./molecules/getEvents")(router, console);
@@ -111,6 +129,9 @@ require("./molecules/createConfig")(router, console);
 require("./molecules/getConfig")(router, console);
 require("./molecules/chargementExist")(router);
 require("./molecules/userInChargement")(router);
+
+require("./molecules/clotureChargement")(router,console, io);
+require("./molecules/logoutSalarie")(router,console, io);
 
 require("./organisms/socket")(io,console, storePos);
 
@@ -136,12 +157,13 @@ console.tag({
     colors: ["italic", "green", "bold"]
 }).time().file().info(`Magic happens on port ${port}`);
 
-// const startMail = require("./mail/startMail");
-//
-// sendMail(startMail)
-// .then(res => {
-//     console.log(res.accepted);
-// })
-// .catch(err =>{
-//     console.log(err);
-// });
+const startMail = require("./mail/startMail");
+const sendMail = require("./mail/nodemailer");
+
+sendMail(startMail)
+.then(res => {
+    console.log(res.accepted);
+})
+.catch(err =>{
+    console.log(err);
+});
