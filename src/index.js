@@ -72,10 +72,10 @@ router.use(function(req, res, next) {
             });
         } else if (user) {
             if (user.active) {
-                console.tag({
-                    msg: "TOKEN",
-                    colors: ["italic", "bgGreen", "bold"]
-                }).time().file().info(`request ${user.token}`);
+                // console.tag({
+                //     msg: "TOKEN",
+                //     colors: ["italic", "bgGreen", "bold"]
+                // }).time().file().info(`request ${user.token}`);
                 next();
                 if (user.nbRequest != undefined) {
                     user.nbRequest = user.nbRequest + 1;
@@ -130,6 +130,11 @@ require("./molecules/getConfig")(router, console);
 require("./molecules/chargementExist")(router);
 require("./molecules/userInChargement")(router);
 
+require("./molecules/getLastPosDms")(router);
+require("./molecules/getLastPosDmsFromSoc")(router);
+
+
+
 require("./molecules/clotureChargement")(router,console, io);
 require("./molecules/logoutSalarie")(router,console, io);
 
@@ -157,13 +162,13 @@ console.tag({
     colors: ["italic", "green", "bold"]
 }).time().file().info(`Magic happens on port ${port}`);
 
-const startMail = require("./mail/startMail");
-const sendMail = require("./mail/nodemailer");
-
-sendMail(startMail)
-.then(res => {
-    console.log(res.accepted);
-})
-.catch(err =>{
-    console.log(err);
-});
+// const startMail = require("./mail/startMail");
+// const sendMail = require("./mail/nodemailer");
+//
+// sendMail(startMail)
+// .then(res => {
+//     console.log(res.accepted);
+// })
+// .catch(err =>{
+//     console.log(err);
+// });
