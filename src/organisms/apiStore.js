@@ -16,7 +16,7 @@ module.exports = (router, console, storePos) => {
                 if (err) {
                     res.send(err);
                 }
-                console.tag("STOREPOS").time().file().info("CLEAR");
+                console.info("STORAGE CLEAR");
                 res.send("ok");
             });
     });
@@ -28,7 +28,7 @@ module.exports = (router, console, storePos) => {
                 if (err) {
                     res.send(err);
                 }
-                console.tag("STOREPOS").time().file().info(`Remove ${req.params.numPosition}`);
+                console.info(`STORAGE Remove ${req.params.numPosition}`);
                 res.send("ok");
             });
     });

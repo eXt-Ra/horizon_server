@@ -18,16 +18,13 @@ module.exports = (router, console, storage) =>{
         }else {
             numColis = req.query.numColis;
         }
-        
+
         //is in storage
         let newStorage = {};
         getPosStorage(numColis, storage)
             .then(resStore => {
                 if (resStore != undefined) {
-                    console.tag({
-                        msg: `STORAGE | ${req.params.action}`,
-                        colors: ["italic", "grey", "bold"]
-                    }).time().file().info({
+                    console.info(`STORAGE | ${req.params.action}`,{
                         num: resStore.numPosition,
                         user: req.params.user
                     });
@@ -47,10 +44,7 @@ module.exports = (router, console, storage) =>{
             .then(resPos => {
                 if (resPos != undefined) {
                     if (resPos.length == 0) {
-                        console.tag({
-                            msg: `TEMP_DB | ${req.params.action}`,
-                            colors: ["italic", "magenta", "bold"]
-                        }).time().file().info(`no result ${numColis} par ${req.params.user}`);
+                        console.info(`TEMP_DB | ${req.params.action}`,`no result ${numColis} par ${req.params.user}`);
                     // is position in prodTable
                         if (req.params.action == "chargement") {
                             return getPosOnlyColisProdTable(numColis, req.query.societe);
@@ -74,10 +68,7 @@ module.exports = (router, console, storage) =>{
                                         traitColis(numColis, req.params.action, req.params.user, req.query.zone,storage);
                                     }
                                 });
-                            console.tag({
-                                msg: `TEMP_DB | ${req.params.action}`,
-                                colors: ["italic", "magenta", "bold"]
-                            }).time().file().info({
+                            console.info(`TEMP_DB | ${req.params.action}`,{
                                 num: numColis,
                                 user: req.params.user
                             });
@@ -90,10 +81,7 @@ module.exports = (router, console, storage) =>{
             }).then(resPos => {
                 if (resPos != undefined) {
                     if (resPos.length == 0) {
-                        console.tag({
-                            msg: `PROD_DB | ${req.params.action}`,
-                            colors: ["italic", "blue", "bold"]
-                        }).time().file().info(`no result ${numColis} par ${req.params.user}`);
+                        console.info(`PROD_DB | ${req.params.action}`,`no result ${numColis} par ${req.params.user}`);
                         res.status(200).json(resPos);
                         throw "finish";
                     } else {
@@ -113,10 +101,7 @@ module.exports = (router, console, storage) =>{
                                         traitColis(numColis, req.params.action, req.params.user, req.query.zone, storage);
                                     }
                                 });
-                            console.tag({
-                                msg: `PROD_DB | ${req.params.action}`,
-                                colors: ["italic", "blue", "bold"]
-                            }).time().file().info({
+                            console.info(`PROD_DB | ${req.params.action}`,{
                                 num: numColis,
                                 user: req.params.user
                             });
@@ -125,10 +110,7 @@ module.exports = (router, console, storage) =>{
                     }
                 }
             }).catch( err =>{
-                console.tag({
-                    msg: `ERR | ${numColis}`,
-                    colors: ["italic", "red", "bold"]
-                }).time().file().info(err);
+                console.error(`ERR | ${numColis}`,err);
             });
     });
 };

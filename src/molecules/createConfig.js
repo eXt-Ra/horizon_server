@@ -48,15 +48,9 @@ module.exports = (router, console) => {
         newConfig.save(function(err) {
             if (err){
                 res.status(500).send(err);
-                console.tag({
-                    msg: "CONFIG",
-                    colors: ["italic", "GREEN", "bold"]
-                }).time().file().error(err);
+                console.error(err);
             }else {
-                console.tag({
-                    msg: "CONFIG",
-                    colors: ["italic", "GREEN", "bold"]
-                }).time().file().info(`Config Creation Done token = ${name}-${societe}`);
+                console.info(`Config Creation Done token = ${name}-${societe}`);
                 res.send("Config Creation Done");
             }
         });
@@ -113,15 +107,9 @@ module.exports = (router, console) => {
             }, (err) => {
                 if (err){
                     res.status(500).send(err);
-                    console.tag({
-                        msg: "CONFIG UPDATE",
-                        colors: ["italic", "GREEN", "bold"]
-                    }).time().file().error(err);
+                    console.error(err);
                 }else {
-                    console.tag({
-                        msg: "CONFIG UPDATE",
-                        colors: ["italic", "GREEN", "bold"]
-                    }).time().file().info(`Config Update Done token = ${name}-${societe}`);
+                    console.info(`Config Update Done token = ${name}-${societe}`);
                     res.send("Config Update Done");
                 }
             });

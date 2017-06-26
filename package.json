@@ -33,7 +33,9 @@
     "rand-token": "^0.3.0",
     "request": "^2.81.0",
     "scribe-js": "^2.0.4",
-    "socket.io": "^1.7.2"
+    "socket.io": "^1.7.2",
+    "winston": "^2.3.1",
+    "winston-daily-rotate-file": "^1.4.6"
   },
   "devDependencies": {
     "mocha": "^3.2.0"

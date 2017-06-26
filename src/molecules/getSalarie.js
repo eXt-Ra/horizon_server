@@ -8,11 +8,11 @@ module.exports = (router, console) =>{
         new sql.Request(conn).input("val", sql.NVarChar, req.params.val)
             .query("SELECT TOP 1 SALCODE, SALSOCCODE FROM SALARIE WHERE SALCODE=@val OR SALNUMPERMIS=@val", function(err, recordset) {
                 if (err) {
-                    console.tag("SALARIE").time().file().error(err);
+                    console.error(err);
                     res.status(500).send(err);
                 }
                 if (recordset.length === 0) {
-                    console.tag("SALARIE").time().file().info(`${req.params.val} No result`);
+                    console.info(`${req.params.val} No result`);
                     res.status(204).send("No result");
                 }else {
                     UserDcs.findOne({
@@ -23,20 +23,20 @@ module.exports = (router, console) =>{
                             if (user.connected) {
                                 if (req.query.serial != undefined) {
                                     if (req.query.serial == user.serial) {
-                                        console.tag("SALARIE").time().file().info(`serial corrrespond ${req.query.serial}`);
-                                        console.tag("SALARIE").time().file().info(req.params.val);
+                                        console.info(`serial corrrespond ${req.query.serial}`);
+                                        console.info(req.params.val);
                                         res.status(200).json(recordset);
                                         user.lastConn = new Date();
                                         user.save((err) => {
                                             if (err) throw err;
                                         });
                                     }else {
-                                        console.tag("SALARIE").time().file().info(`${recordset[0].SALCODE} already connected`);
+                                        console.info(`${recordset[0].SALCODE} already connected`);
                                         res.status(409).send("User already connected");
                                     }
                                 }else {
-                                    console.tag("SALARIE").time().file().info(`NO serial provided / ${recordset[0].SALCODE}`);
-                                    console.tag("SALARIE").time().file().info(req.params.val);
+                                    console.info(`NO serial provided / ${recordset[0].SALCODE}`);
+                                    console.info(req.params.val);
                                     res.status(200).json(recordset);
                                     user.lastConn = new Date();
                                     user.save((err) => {
@@ -44,7 +44,7 @@ module.exports = (router, console) =>{
                                     });
                                 }
                             }else {
-                                console.tag("SALARIE").time().file().info(req.params.val);
+                                console.info(req.params.val);
                                 res.status(200).json(recordset);
                                 user.lastConn = new Date();
                                 user.connected = true;
@@ -53,7 +53,7 @@ module.exports = (router, console) =>{
                                 });
                             }
                         }else {
-                            console.tag("SALARIE").time().file().info(req.params.val);
+                            console.info(req.params.val);
                             res.status(200).json(recordset);
 
                             const newuser = new UserDcs({

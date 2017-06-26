@@ -1,7 +1,7 @@
 const sql = require("mssql");
 const conn = require("./../conn");
 
-module.exports = (router, console) =>{
+module.exports = (router) =>{
 //GET EVENTS
     router.get("/events", (req, res) => {
         new Promise((resolve, reject) => {
@@ -14,10 +14,8 @@ module.exports = (router, console) =>{
                     and TEVACTIF=1`,
                 (err, recordset) => {
                     if (err) {
-                        console.tag("EVENTS").time().file().error(err);
                         reject(err);
                     }
-                    console.tag("EVENTS").time().file().info("GET EVENTS");
                     resolve(recordset);
                 });
         }).then(result => {

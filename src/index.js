@@ -3,12 +3,11 @@ const express = require("express");
 const helmet = require("helmet");
 const app = express();
 const busboy = require("connect-busboy");
-const scribe = require("scribe-js")();
-const console = process.console;
 const storage = require("node-persist");
 const UserDcs = require("./_MongoDB/models/userdcs");
-
 app.use(helmet());
+
+const logger = require("./organisms/logger");
 
 //MongoDB
 const mongoose = require("mongoose");
@@ -40,7 +39,7 @@ app.get("/setup", (req, res) => {
     Romain.save(function(err) {
         if (err) throw err;
 
-        console.log("User saved successfully");
+        logger.log("User saved successfully");
         res.json({
             success: true
         });
@@ -101,50 +100,45 @@ const storePos = storage.create({
 
 storePos.init()
   .then(() => {
-      console.tag({
-          msg: "STORAGEPOS | UP",
-          colors: ["italic", "grey", "bold"]
-      }).time().file().info("Storage up");
+      logger.DCS_Console.info("[STORAGEPOS | UP]", "Storage up");
   }).catch(e => {
-      console.tag({
-          msg: "STORAGEPOS | DOWN",
-          colors: ["italic", "red", "bold"]
-      }).time().file().error(e);
+      logger.DCS_Console.error("[STORAGEPOS | DOWN]", e);
   });
 
-require("./organisms/getPosition")(router, console, storePos);
-require("./organisms/apiStore")(router, console, storePos);
+require("./organisms/getPosition")(router, logger.DCS_Positions, storePos);
+require("./organisms/apiStore")(router, logger.DCS_Console, storePos);
 require("./organisms/apiMongo")(router);
-require("./molecules/getSalarie")(router, console);
-require("./molecules/requestToken")(router, console);
-require("./molecules/getZone")(router, console);
-require("./molecules/getZones")(router, console);
-require("./molecules/getEvents")(router, console);
-require("./molecules/postImage")(router, console);
-require("./molecules/getIcoEvents")(router, console);
-require("./molecules/postEvent")(router, console, storePos);
-require("./organisms/getInfoGroupage")(router, console);
-require("./molecules/createChargement")(router, console);
-require("./molecules/createConfig")(router, console);
-require("./molecules/getConfig")(router, console);
+require("./molecules/getSalarie")(router, logger.DCS_Salarie);
+require("./molecules/logoutSalarie")(router,logger.DCS_Salarie, io);
+require("./molecules/requestToken")(router, logger.DCS_Console);
+require("./molecules/getEvents")(router);
+require("./molecules/postImage")(router, logger.DCS_Image);
+require("./molecules/getIcoEvents")(router, logger.DCS_Event);
+require("./molecules/postEvent")(router, logger.DCS_Event, storePos);
+
+require("./organisms/getInfoGroupage")(router);
+
+require("./molecules/createChargement")(router, logger.DCS_Positions);
+require("./molecules/clotureChargement")(router,logger.DCS_Positions, io);
+
 require("./molecules/chargementExist")(router);
 require("./molecules/userInChargement")(router);
+
+require("./molecules/createConfig")(router, logger.DCS_Console);
+require("./molecules/getConfig")(router, logger.DCS_Console);
+
+require("./molecules/getZone")(router);
+require("./molecules/getZones")(router, logger.DCS_Console);
 
 require("./molecules/getLastPosDms")(router);
 require("./molecules/getLastPosDmsFromSoc")(router);
 
 
 
-require("./molecules/clotureChargement")(router,console, io);
-require("./molecules/logoutSalarie")(router,console, io);
-
-require("./organisms/socket")(io,console, storePos);
+require("./organisms/socket")(io, logger.DCS_Socket, storePos);
 
 app.use("/api", router);
 app.listen(port);
-
-app.use("/logs", scribe.webPanel());
-app.use(scribe.express.logger());
 
 //disconnect all user
 UserDcs.find({}, (err, users) => {
@@ -157,10 +151,7 @@ UserDcs.find({}, (err, users) => {
     });
 });
 
-console.tag({
-    msg: "START",
-    colors: ["italic", "green", "bold"]
-}).time().file().info(`Magic happens on port ${port}`);
+logger.DCS_Console.info(`[START] Magic happens on port ${port}`);
 
 // const startMail = require("./mail/startMail");
 // const sendMail = require("./mail/nodemailer");

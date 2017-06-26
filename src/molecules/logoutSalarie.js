@@ -9,7 +9,7 @@ module.exports = (router, console, io) =>{
             if (err) throw err;
             if (user != null) {
                 user.connected = false;
-                console.tag("SALARIELOGOUT").time().file().info(`USER : ${user.code} DISCONN`);
+                console.info(`USER : ${user.code} DISCONN`);
                 io.to("desktop").emit("suppSmart", user.code);
                 user.save((err) => {
                     if (err) throw err;

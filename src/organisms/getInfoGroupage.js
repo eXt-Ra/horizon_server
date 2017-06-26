@@ -4,7 +4,7 @@ const getMessageAdmin = require("./../molecules/getMessageAdmin");
 const getSuiviDms = require("./../molecules/getSuiviDms");
 const getProgressDms = require("./../molecules/getProgressDms");
 
-module.exports = (router, console) => {
+module.exports = (router) => {
     //GET INFO GROUPAGE
     const dataGrp = {
         numero: 0,
@@ -43,16 +43,16 @@ module.exports = (router, console) => {
             getProgressDms(dataGrp.chauffeur.code).then(result => {
                 dataGrp.progressBar = result;
                 res.json(dataGrp);
-                console.tag({
-                    msg: "INFOGRP",
-                    colors: ["italic", "blue", "bold"]
-                }).time().file().info(req.params.numero);
+                // console.tag({
+                //     msg: "INFOGRP",
+                //     colors: ["italic", "blue", "bold"]
+                // }).time().file().info(req.params.numero);
             });
         }).catch(err => {
-            console.error({
-                msg: "INFOGRP",
-                colors: ["italic", "red", "bold"]
-            }).time().file().info(req.params.numero);
+            // console.error({
+            //     msg: "INFOGRP",
+            //     colors: ["italic", "red", "bold"]
+            // }).time().file().info(req.params.numero);
             res.json({
                 error: err
             });

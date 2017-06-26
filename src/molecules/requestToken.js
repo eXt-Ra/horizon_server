@@ -15,17 +15,17 @@ module.exports = (router, console) =>{
                     type: req.query.model,
                     active: true
                 });
-                console.log(newUser);
+                console.info("requestToken",newUser);
                 newUser.save(function(err) {
                     if (err) throw err;
-                    console.log("User saved successfully");
+                    console.info("requestToken",`User saved successfully ${newUser.name}`);
                     res.send(newUser.token);
                 });
             }else {
                 userapi.societe = req.query.societe;
                 userapi.save(function(err) {
                     if (err) throw err;
-                    console.log("User saved successfully");
+                    console.info("requestToken",`Token successfully requested ${newUser.name}`);
                     res.send(userapi.token);
                 });
             }

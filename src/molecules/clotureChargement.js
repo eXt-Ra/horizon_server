@@ -6,7 +6,6 @@ const request = require("request");
 
 module.exports = (router, console, io) =>{
     router.post("/chargement/cloture/:token", (req, res) => {
-        console.log("toto");
         Chargement.findOne({
             token: req.params.token
         }).then(charg => {
@@ -18,10 +17,7 @@ module.exports = (router, console, io) =>{
                     user: req.query.user,
                     date: moment().format()
                 });
-                console.tag({
-                    msg: "CHARGEMENT",
-                    colors: ["italic", "blue", "bold"]
-                }).time().file().info(`CHA.Cloture Cloture de  ${req.params.token} / ${req.query.user}`);
+                console.info(`CHA.Cloture Cloture de  ${req.params.token} / ${req.query.user}`);
 
                 const data = [];
                 JSON.parse(req.query.commande).forEach(pos =>{
@@ -31,7 +27,7 @@ module.exports = (router, console, io) =>{
                     };
                     data.push(newdata);
                 });
-                console.log({
+                console.info({
                     GRPQUIC: req.query.user,
                     GRPPORTE: req.query.zone,
                     GRPCOMMANDE: data
@@ -51,7 +47,7 @@ module.exports = (router, console, io) =>{
                 };
                 request(options, function(error, response, body) {
                     if (error) throw new Error(error);
-                    console.log(body);
+                    console.info(body);
                     if (body != "0") {
                         charg.status = "close";
                         charg.token = `${req.params.token}_${body}`;

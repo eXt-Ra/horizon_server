@@ -21,10 +21,7 @@ module.exports = (router, console) =>{
         newCharg.save(function(err) {
             if (err) throw err;
 
-            console.tag({
-                msg: "CHARGEMENT",
-                colors: ["italic", "blue", "bold"]
-            }).time().file().info(`Chargement Creation Done token = ${zone}-${societe}`);
+            console.info(`Chargement Creation Done token = ${zone}-${societe}`);
             res.send("Chargement Creation Done");
         });
     });

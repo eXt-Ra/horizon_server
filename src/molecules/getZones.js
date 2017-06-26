@@ -13,10 +13,10 @@ module.exports = (router, console) =>{
                     WHERE QUASOCCODE LIKE @val`,
                 (err, recordset) => {
                     if (err) {
-                        console.tag("ZONE").time().file().error(err);
+                        console.error(err);
                         reject(err);
                     }
-                    console.tag("ZONES").time().file().info(req.params.soc);
+                    console.info(`Resquest Zones for ${req.params.soc}`);
                     resolve(recordset);
                 });
         }).then(result => {

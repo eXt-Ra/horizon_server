@@ -1,7 +1,7 @@
 const sql = require("mssql");
 const conn = require("./../conn");
 
-module.exports = (router, console) =>{
+module.exports = (router) =>{
 //GET ZONE
     router.get("/zone/:val", (req, res) => {
         new Promise((resolve, reject) => {
@@ -14,10 +14,9 @@ module.exports = (router, console) =>{
                     AND QUACODEL1 = @val`,
                 (err, recordset) => {
                     if (err) {
-                        console.tag("ZONE").time().file().error(err);
+                        console.error(err);
                         reject(err);
                     }
-                    console.tag("ZONE").time().file().info(req.params.val);
                     resolve(recordset);
                 });
         }).then(result => {

@@ -7,7 +7,11 @@ module.exports = (router, console, storage) => {
     router.post("/event", function(req, res) {
         postEventAnd(req.query.codeEvent,req.query.libEvent, req.query.remarque, req.query.user, req.query.idPosition)
         .then((data) =>{
-            console.log(`Event post successfully ${data}`);
+            console.info(`Event post successfully ${data}`,{
+                user : req.query.user,
+                idPosition : req.query.idPosition,
+                codeEvent : req.query.codeEvent
+            });
             res.status(200).send("Event post successfully");
         }).catch((err)=>{
             console.error(err);

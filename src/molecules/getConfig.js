@@ -11,10 +11,7 @@ module.exports = (router, console) =>{
                 societe: societe
             }).then((config) => {
                 if (config != null) {
-                    console.tag({
-                        msg: "CONFIG",
-                        colors: ["italic", "GREEN", "bold"]
-                    }).time().file().info(`Config get Default ${societe}`);
+                    console.info(`Config get Default ${societe}`);
                     res.json(config);
                 } else {
                     res.send("NotExist");
@@ -28,10 +25,7 @@ module.exports = (router, console) =>{
                     name: name
                 }).then((config) => {
                     if (config != null) {
-                        console.tag({
-                            msg: "CONFIG",
-                            colors: ["italic", "GREEN", "bold"]
-                        }).time().file().info(`Config get Name ${name}`);
+                        console.info(`Config get Name ${name}`);
                         res.json(config);
                     } else {
                         res.send("NotExist");
@@ -45,10 +39,7 @@ module.exports = (router, console) =>{
                         societe: societe
                     }).then((configs) => {
                         if (configs != null) {
-                            console.tag({
-                                msg: "CONFIG",
-                                colors: ["italic", "GREEN", "bold"]
-                            }).time().file().info(`Config get List ${societe}`);
+                            console.info(`Config get List ${societe}`);
                             const arrayConfig =[];
                             configs.forEach( item =>{
                                 arrayConfig.push(item.name);
