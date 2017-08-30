@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const positionSchema = new Schema(
     {
+        ordrePosition: { type: String, required: true, unique: true},
         idPosition: { type: String, required: true, unique: true},
         numPosition: { type: String, required: true, unique: true},
         refClient: String,

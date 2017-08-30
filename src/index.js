@@ -12,7 +12,7 @@ const logger = require("./organisms/logger");
 //MongoDB
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb://RomainHori:Dealtis25-@localhost:27017/Horizon");
+mongoose.connect("mongodb://RomainHori:Dealtis25-@localhost:27017/Horizon", { useMongoClient: true });
 
 // Use native promises
 mongoose.Promise = Promise;
@@ -106,6 +106,7 @@ storePos.init()
   });
 
 require("./organisms/getPosition")(router, logger.DCS_Positions, storePos);
+require("./molecules/postPosition")(io,router, logger.DCS_Positions, storePos);
 require("./organisms/apiStore")(router, logger.DCS_Console, storePos);
 require("./organisms/apiMongo")(router);
 require("./molecules/getSalarie")(router, logger.DCS_Salarie);
@@ -133,10 +134,12 @@ require("./molecules/getZones")(router, logger.DCS_Console);
 require("./molecules/getLastPosDms")(router);
 require("./molecules/getLastPosDmsFromSoc")(router);
 
-
-
 require("./organisms/socket")(io, logger.DCS_Socket, storePos);
+require("./organisms/logAPI")(io, logger);
 
+
+app.use("/dashboard_dcs", express.static("dashboard/dcs"));
+app.use("/dms_api", express.static("doc/build"));
 app.use("/api", router);
 app.listen(port);
 

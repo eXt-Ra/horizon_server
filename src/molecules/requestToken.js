@@ -25,7 +25,7 @@ module.exports = (router, console) =>{
                 userapi.societe = req.query.societe;
                 userapi.save(function(err) {
                     if (err) throw err;
-                    console.info("requestToken",`Token successfully requested ${newUser.name}`);
+                    console.info("requestToken",`Token successfully requested ${userapi.name}`);
                     res.send(userapi.token);
                 });
             }

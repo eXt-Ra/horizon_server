@@ -1,7 +1,7 @@
 "use strict";
 const moment = require("moment");
-const console = process.console;
 const postEventAnd = require("./postEventAnd");
+const logger = require("./../organisms/logger");
 
 module.exports = function(num, action, storage) {
     return new Promise((resolve,reject) => {
@@ -38,15 +38,9 @@ module.exports = function(num, action, storage) {
                                 if (pos.ChargementEventDoneAt == undefined || !(moment(pos.ChargementEventDoneAt).isSame(moment().format(), "day"))) {
                                     pos.ChargementEventDoneAt = moment().format();
                                     // TODO creation de l'event
-                                    console.tag({
-                                        msg: `EVENT_FULL | ${action}`,
-                                        colors: ["magenta", "bgYellow", "bold"]
-                                    }).time().file().info(`Event full ${action} for ${num}`);
+                                    logger.DCS_Positions.info(`Event full ${action} for ${num}`);
                                 } else {
-                                    console.tag({
-                                        msg: `EVENT_FULL | ${action}`,
-                                        colors: ["bgRed", "bold"]
-                                    }).time().file().info(`Event full ${action} already done today for ${num}`);
+                                    logger.DCS_Positions.info(`Event full ${action} already done today for ${num}`);
                                 }
                                 break;
                             case "dechargement":
@@ -57,44 +51,28 @@ module.exports = function(num, action, storage) {
                                     const sch = pos.evenement.find((o)=>{
                                         return o.source == "DCS" && (o.code.indexOf("AAR") > -1);
                                     });
-                                    console.log(sch);
                                     if (sch == undefined) {
                                         postEventAnd("AARCFM","","", "", pos.idPosition);
                                     }
 
-                                    console.tag({
-                                        msg: `EVENT_FULL | ${action}`,
-                                        colors: ["magenta", "bgYellow", "bold"]
-                                    }).time().file().info(`Event full ${action} for ${num}`);
+                                    logger.DCS_Positions.info(`Event full ${action} for ${num}`);
                                 } else {
-                                    console.tag({
-                                        msg: `EVENT_FULL | ${action}`,
-                                        colors: ["bgRed", "bold"]
-                                    }).time().file().info(`Event full ${action} already done today for ${num}`);
+                                    logger.DCS_Positions.info(`Event full ${action} already done today for ${num}`);
                                 }
                                 break;
                             case "inventaire":
                             //si EventDoneAt not à la date du jours ou inexistant > faire l'event
                                 if (pos.InventaireEventDoneAt == undefined || !(moment(pos.InventaireEventDoneAt).isSame(moment().format(), "day"))) {
                                     pos.InventaireEventDoneAt = moment().format();
-
                                     const sch = pos.evenement.find((o)=>{
                                         return o.code == "AARCFM";
                                     });
-
                                     if (sch == undefined) {
                                         postEventAnd("AARCFM","","", "", pos.idPosition);
                                     }
-
-                                    console.tag({
-                                        msg: `EVENT_FULL | ${action}`,
-                                        colors: ["magenta", "bgYellow", "bold"]
-                                    }).time().file().info(`Event full ${action} for ${num}`);
+                                    logger.DCS_Positions.info(`Event full ${action} for ${num}`);
                                 } else {
-                                    console.tag({
-                                        msg: `EVENT_FULL | ${action}`,
-                                        colors: ["bgRed", "bold"]
-                                    }).time().file().info(`Event full ${action} already done today for ${num}`);
+                                    logger.DCS_Positions.info(`Event full ${action} already done today for ${num}`);
                                 }
                                 break;
                             }

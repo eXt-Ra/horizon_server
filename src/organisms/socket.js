@@ -130,12 +130,13 @@ module.exports = (io, console, storePos) =>{
             });
         });
 
-        socket.on("CHA.addPos", (token, numpos, user) => {
+        socket.on("CHA.addPos", (token, numpos, user, index) => {
             Chargement.findOne({
                 token: token
             }).then(charg => {
                 if (charg != null) {
                     storePos.getItem(numpos).then(pos => {
+                        pos.ordrePosition = Number(index);
                         const newPos = new Position(pos);
                         newPos.save(function(err) {
                             if (err){
