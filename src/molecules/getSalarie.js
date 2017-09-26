@@ -21,32 +21,40 @@ module.exports = (router, console) =>{
                         if (err) throw err;
                         if (user != null) {
                             if (user.connected) {
-                                if (req.query.serial != undefined) {
-                                    if (req.query.serial == user.serial) {
-                                        console.info(`serial corrrespond ${req.query.serial}`);
-                                        console.info(req.params.val);
-                                        res.status(200).json(recordset);
-                                        user.lastConn = new Date();
-                                        user.save((err) => {
-                                            if (err) throw err;
-                                        });
-                                    }else {
-                                        console.info(`${recordset[0].SALCODE} already connected`);
-                                        res.status(409).send("User already connected");
-                                    }
-                                }else {
-                                    console.info(`NO serial provided / ${recordset[0].SALCODE}`);
-                                    console.info(req.params.val);
-                                    res.status(200).json(recordset);
-                                    user.lastConn = new Date();
-                                    user.save((err) => {
-                                        if (err) throw err;
-                                    });
-                                }
+                                // if (req.query.serial != undefined) {
+                                //     if (req.query.serial == user.serial) {
+                                //         console.info(`serial corrrespond ${req.query.serial}`);
+                                //         console.info(req.params.val);
+                                //         res.status(200).json(recordset);
+                                //         user.lastConn = new Date();
+                                //         user.save((err) => {
+                                //             if (err) throw err;
+                                //         });
+                                //     }else {
+                                //         console.info(`${recordset[0].SALCODE} already connected`);
+                                //         res.status(409).send("User already connected");
+                                //     }
+                                // }else {
+                                //     console.info(`NO serial provided / ${recordset[0].SALCODE}`);
+                                //     console.info(req.params.val);
+                                //     res.status(200).json(recordset);
+                                //     user.lastConn = new Date();
+                                //     user.save((err) => {
+                                //         if (err) throw err;
+                                //     });
+                                // }
+                                res.status(200).json(recordset);
+                                user.lastConn = new Date();
+                                user.save((err) => {
+                                    if (err) throw err;
+                                });
                             }else {
                                 console.info(req.params.val);
                                 res.status(200).json(recordset);
                                 user.lastConn = new Date();
+                                if (req.query.serial != undefined) {
+                                    user.serial = req.query.serial;
+                                }
                                 user.connected = true;
                                 user.save((err) => {
                                     if (err) throw err;

@@ -125,8 +125,8 @@ require("./molecules/clotureChargement")(router,logger.DCS_Positions, io);
 require("./molecules/chargementExist")(router);
 require("./molecules/userInChargement")(router);
 
-require("./molecules/createConfig")(router, logger.DCS_Console);
-require("./molecules/getConfig")(router, logger.DCS_Console);
+require("./molecules/createConfigDCS")(router, logger.DCS_Console);
+require("./molecules/getConfigDCS")(router, logger.DCS_Console);
 
 require("./molecules/getZone")(router);
 require("./molecules/getZones")(router, logger.DCS_Console);

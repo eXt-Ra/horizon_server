@@ -1,4 +1,4 @@
-const Config = require("./../_MongoDB/models/config");
+const Config = require("./../_MongoDB/models/configDCS");
 //Create Chargement
 module.exports = (router, console) => {
     router.post("/config/create", (req, res) => {

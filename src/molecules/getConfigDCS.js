@@ -1,4 +1,4 @@
-const Config = require("./../_MongoDB/models/config");
+const Config = require("./../_MongoDB/models/configDCS");
 //chargement exist
 module.exports = (router, console) =>{
     router.get("/config", (req, res) => {

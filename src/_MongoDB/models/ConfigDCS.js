@@ -10,8 +10,9 @@ const configSchema = new Schema({
     inventaireMode: { type: String, required: true},
     logoutTime: { type: String, required: true},
     wrongZoneAlert: { type: Boolean, required: true},
-    scanManuel: { type: Boolean, required: true}
+    scanManuel: { type: Boolean, required: true},
+    scanZoneDechargement: { type: Boolean}
 });
 
-const Config = mongoose.model("Config", configSchema);
+const Config = mongoose.model("configDCS", configSchema);
 module.exports = Config;
