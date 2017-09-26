@@ -128,6 +128,9 @@ require("./molecules/userInChargement")(router);
 require("./molecules/createConfigDCS")(router, logger.DCS_Console);
 require("./molecules/getConfigDCS")(router, logger.DCS_Console);
 
+//COPY
+require("./molecules/copyConfigToConfigDcs")(router, logger.DCS_Console);
+
 require("./molecules/getZone")(router);
 require("./molecules/getZones")(router, logger.DCS_Console);
 
@@ -153,6 +156,8 @@ UserDcs.find({}, (err, users) => {
         });
     });
 });
+
+
 
 logger.DCS_Console.info(`[START] Magic happens on port ${port}`);
 
