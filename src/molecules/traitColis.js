@@ -4,7 +4,7 @@ const updateColisProd = require("./updateColisProd");
 const traitFullFlash = require("./traitFullFlash");
 const logger = require("./../organisms/logger");
 
-module.exports = function(num, action, user, zone, storage) {
+module.exports = function(num, action, user, zone, storage,societe) {
     return new Promise((resolve, reject) => {
         updateColisStorage(num, action, user, zone, storage)
             .then(pos => {
@@ -12,7 +12,7 @@ module.exports = function(num, action, user, zone, storage) {
             }).then(() => {
                 logger.DCS_Positions.info(`UPDATE_DB | Update ${action} from ${num}`);
                 //update DB
-                return updateColisProd(num, action, user, zone);
+                return updateColisProd(num, action, user, zone, societe);
             }).then(() => {
                 if (zone != undefined) {
                     logger.DCS_Positions.info(`UPDATE_DB | Update ${action} from ${num} at ${zone}`);

@@ -1,4 +1,4 @@
-const Config = require("./../_MongoDB/models/configDCS");
+const ConfigDCS = require("./../_MongoDB/models/configDCS");
 //chargement exist
 module.exports = (router, console) =>{
     router.get("/config", (req, res) => {
@@ -6,7 +6,7 @@ module.exports = (router, console) =>{
         const societe = req.query.societe;
         const isDefault = req.query.default;
         if (isDefault == "true") {
-            Config.findOne({
+            ConfigDCS.findOne({
                 isDefault: true,
                 societe: societe
             }).then((config) => {
@@ -21,7 +21,7 @@ module.exports = (router, console) =>{
             });
         }else {
             if (name != undefined) {
-                Config.findOne({
+                ConfigDCS.findOne({
                     name: name
                 }).then((config) => {
                     if (config != null) {
@@ -35,7 +35,7 @@ module.exports = (router, console) =>{
                 });
             }else {
                 if (societe != undefined) {
-                    Config.find({
+                    ConfigDCS.find({
                         societe: societe
                     }).then((configs) => {
                         if (configs != null) {
@@ -52,7 +52,7 @@ module.exports = (router, console) =>{
                         if (err) throw err;
                     });
                 }else {
-                    Config.find({}).then((configs) => {
+                    ConfigDCS.find({}).then((configs) => {
                         if (configs != null) {
                             res.json(configs);
                         } else {

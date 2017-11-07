@@ -1,38 +1,35 @@
 const Chargement = require("./../_MongoDB/models/chargement");
 const {
-  Position
+    Position
 } = require("./../_MongoDB/models/position");
 const async = require("async");
 //chargement exist
 module.exports = (router) => {
-  router.get("/chargement/:token", (req, res) => {
-    const token = req.params.token;
-    Chargement.findOne({
-      token: token
-    }).then((charg) => {
-      if (charg != null) {
-        var positions = [];
-        async.forEachOf(charg.positions, function(pos, key, callback) {
-          Position.findOne({
-            numPosition: pos
-          }).then(item => {
-            positions.push(item);
-            callback();
-          });
-        }, () => {
-          const orderPositions = positions.sort((a, b) => {
-            return a.ordrePosition - b.ordrePosition;
-          });
-          orderPositions.forEach(item => {
-            console.log(item.ordrePosition);
-          });
-          res.json(orderPositions)
+    router.get("/chargement/:token", (req, res) => {
+        const token = req.params.token;
+        Chargement.findOne({
+            token: token
+        }).then((charg) => {
+            if (charg != null) {
+                var positions = [];
+                async.forEachOf(charg.positions, function(pos, key, callback) {
+                    Position.findOne({
+                        numPosition: pos
+                    }).then(item => {
+                        positions.push(item);
+                        callback();
+                    });
+                }, () => {
+                    const orderPositions = positions.sort((a, b) => {
+                        return a.ordrePosition - b.ordrePosition;
+                    });
+                    res.json(orderPositions);
+                });
+            } else {
+                res.send("NotExist");
+            }
+        }).catch(err => {
+            if (err) throw err;
         });
-      } else {
-        res.send("NotExist");
-      }
-    }).catch(err => {
-      if (err) throw err;
     });
-  });
 };

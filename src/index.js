@@ -99,11 +99,11 @@ const storePos = storage.create({
 });
 
 storePos.init()
-  .then(() => {
-      logger.DCS_Console.info("[STORAGEPOS | UP]", "Storage up");
-  }).catch(e => {
-      logger.DCS_Console.error("[STORAGEPOS | DOWN]", e);
-  });
+    .then(() => {
+        logger.DCS_Console.info("[STORAGEPOS | UP]", "Storage up");
+    }).catch(e => {
+        logger.DCS_Console.error("[STORAGEPOS | DOWN]", e);
+    });
 
 require("./organisms/getPosition")(router, logger.DCS_Positions, storePos);
 require("./molecules/postPosition")(io,router, logger.DCS_Positions, storePos);

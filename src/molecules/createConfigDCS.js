@@ -1,4 +1,4 @@
-const Config = require("./../_MongoDB/models/configDCS");
+const ConfigDCS = require("./../_MongoDB/models/configDCS");
 //Create Chargement
 module.exports = (router, console) => {
     router.post("/config/create", (req, res) => {
@@ -33,7 +33,7 @@ module.exports = (router, console) => {
             scanManuel = false;
         }
 
-        const newConfig = new Config({
+        const newConfig = new ConfigDCS({
             name: name,
             societe: societe,
             isDefault: def,
@@ -89,7 +89,7 @@ module.exports = (router, console) => {
             scanManuel = false;
         }
 
-        Config.update(
+        ConfigDCS.update(
             {
                 name: name
             },

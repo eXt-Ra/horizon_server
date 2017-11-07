@@ -3,7 +3,7 @@ const {Position} = require("./../_MongoDB/models/position");
 const moment = require("moment");
 
 module.exports = (io,router, console, storage) => {
-  //POST IMAGE
+    //POST IMAGE
     router.post("/position", function(req, res) {
         Chargement.findOne({
             token: req.query.token
@@ -16,6 +16,8 @@ module.exports = (io,router, console, storage) => {
                         if (err){
                             // TODO: error position déja ajouter
                             console.info(`API addPos Position en double ${req.query.numPosition} / ${req.query.user}`);
+                        }else {
+                            console.info(`API addPos Position ajouté ${req.query.numPosition} / ${req.query.user}`);
                         }
                     });
 
@@ -34,6 +36,7 @@ module.exports = (io,router, console, storage) => {
                     charg.save(function(err) {
                         if (err) throw err;
                         console.info(`API addPos UPDATE ${req.query.token} / ${req.query.numPosition} / ${req.query.user}`);
+                        res.status(200).send();
                     });
                     io.broadcast.to(req.query.token).emit("CHA.addPos_Notif", req.query.numPosition);
                 });

@@ -4,8 +4,8 @@ const conn = require("./../conn");
 module.exports = function(num, societe) {
     return new Promise((resolve, reject) => {
         new sql.Request(conn)
-                .input("numColis", sql.NVarChar, num)
-                .query(`select
+            .input("numColis", sql.NVarChar, num)
+            .query(`select
                           OTSID as idPosition,
                           OTSNUM as numPosition,
                           OTSREF as refClient,
@@ -60,11 +60,11 @@ module.exports = function(num, societe) {
                           QUALIBL1 as zoneQuaiTheorique
                           from QUAI_${societe}
                           WHERE OTSNUM=@numColis;`,
-                          (err, recordset) => {
-                              if (err) {
-                                  reject(err);
-                              }
-                              resolve(recordset);
-                          });
+            (err, recordset) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(recordset);
+            });
     });
 };

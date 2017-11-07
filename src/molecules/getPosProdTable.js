@@ -39,11 +39,11 @@ module.exports = function(num, societe) {
                 AND otsarrvilid*= TOUVILID AND OTSVPECODE*=QUAVTOCODE and QUASOCCODE='${societe}'
                 AND POS.OTSNUM=@numColis
                 AND POS.OTSSOCCODE like '${societe}%';`,
-                (err, recordset) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    resolve(recordset);
-                });
+            (err, recordset) => {
+                if (err) {
+                    reject(err);
+                }
+                resolve(recordset);
+            });
     });
 };

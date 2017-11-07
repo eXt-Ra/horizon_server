@@ -225,9 +225,9 @@ module.exports = (io, console, storePos) =>{
                                 "codebarre.$.isScanner": true
                             }
                         },
-                (err, result) => {
-                    console.info(result);
-                });
+                        (err, result) => {
+                            console.info(result);
+                        });
 
                     charg.save((err) => {
                         if (err) throw err;
