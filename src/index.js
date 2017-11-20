@@ -140,6 +140,8 @@ require("./molecules/getLastPosDmsFromSoc")(router);
 require("./organisms/socket")(io, logger.DCS_Socket, storePos);
 require("./organisms/logAPI")(io, logger);
 
+require("./molecules/resendEventDay")(router, storePos);
+
 
 app.use("/dashboard_dcs", express.static("dashboard/dcs"));
 app.use("/dms_api", express.static("doc/build"));

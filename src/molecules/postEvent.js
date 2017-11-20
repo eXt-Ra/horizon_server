@@ -19,7 +19,7 @@ module.exports = (router, console, storage) => {
         });
         const sch = storage.values().find((o) => {
             return o.idPosition == req.query.idPosition;
-        });,3
+        });
 
 
         if (sch != undefined) {
