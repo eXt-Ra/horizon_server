@@ -5,7 +5,7 @@ const s = `select
             POS.OTSNUM as numPosition,
             POS.OTSREF as refClient,
             POS.OTSCOL as nbColis,
-            POS.OTSPAL as nbPalette,
+            COALESCE(POS.OTSPAL, 0) as nbPalette,
             POS.OTSPDS as poids,
             COALESCE(POS.OTSLONG, 0) as ml,
             COALESCE(POS.OTSDIV2, 0) as col,

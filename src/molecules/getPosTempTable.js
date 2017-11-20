@@ -10,7 +10,7 @@ module.exports = function(num, societe) {
                           OTSNUM as numPosition,
                           OTSREF as refClient,
                           OTSCOL as nbColis,
-                          OTSPAL as nbPalette,
+                          COALESCE(OTSPAL, 0) as nbPalette,
                           OTSPDS as poids,
                           COALESCE(OTSLONG, 0) as ml,
                           COALESCE(OTSDIV2, 0) as col,

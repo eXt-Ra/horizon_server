@@ -3,6 +3,7 @@ const {
     Position
 } = require("./../_MongoDB/models/position");
 const async = require("async");
+
 //chargement exist
 module.exports = (router) => {
     router.get("/chargement/:token", (req, res) => {
@@ -12,7 +13,7 @@ module.exports = (router) => {
         }).then((charg) => {
             if (charg != null) {
                 var positions = [];
-                async.forEachOf(charg.positions, function(pos, key, callback) {
+                async.forEachOf(charg.positions, function (pos, key, callback) {
                     Position.findOne({
                         numPosition: pos
                     }).then(item => {
