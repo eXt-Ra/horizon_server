@@ -118,6 +118,7 @@ require("./molecules/getIcoEvents")(router, logger.DCS_Event);
 require("./molecules/postEvent")(router, logger.DCS_Event, storePos);
 
 require("./organisms/getInfoGroupage")(router);
+require("./organisms/getPosGroupage")(router);
 
 require("./molecules/createChargement")(router, logger.DCS_Positions);
 require("./molecules/clotureChargement")(router,logger.DCS_Positions, io);
