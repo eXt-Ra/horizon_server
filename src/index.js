@@ -94,7 +94,7 @@ router.use(function(req, res, next) {
 //Store position Andsoft
 const storePos = storage.create({
     dir: "storePos",
-    ttl: true,
+    ttl: "259200000",
     expiredInterval: 2 * 60 * 1000
 });
 
