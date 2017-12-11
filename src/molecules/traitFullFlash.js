@@ -11,6 +11,8 @@ module.exports = function (num, action, storage) {
                     if (cb.numero === num) {
                         //is all colis flashe today in this action ?
                         let i = 0;
+                        let g = 0;
+                        let isNotSameDay = false;
                         pos.codebarre.forEach(colis => {
                             switch (action) {
                                 case "chargement":
@@ -22,6 +24,12 @@ module.exports = function (num, action, storage) {
                                     if (moment(colis.dateDechargement).isSame(moment().format(), "day")) {
                                         i++;
                                     }
+                                    if (moment(colis.dateDechargement).isSame(moment("1900-01-01").format(), "day")) {
+                                        isNotSameDay = true;
+                                    }
+                                    if (colis.dateDechargement) {
+                                        g++;
+                                    }
                                     break;
                                 case "inventaire":
                                     if (moment(colis.dateInventaire).isSame(moment().format(), "day")) {
@@ -30,6 +38,15 @@ module.exports = function (num, action, storage) {
                                     break;
                             }
                         });
+
+                        if (g == pos.codebarre.length) {
+                            const sch = pos.evenement.find((o) => {
+                                return (o.code.indexOf("COMPLET") > -1);
+                            });
+                            if (sch == undefined && isNotSameDay) {
+                                postEventAnd("COMPLET", "", "", "", pos.idPosition);
+                            }
+                        }
 
                         if (i == pos.codebarre.length) {
                             switch (action) {

@@ -24,7 +24,7 @@ module.exports = (router, console, storePos) => {
     });
 
   //REMOVE STOREPOS
-    router.get("/storePos/remove/:numPosition", (req, res) => {
+    router.get("/storePos/remove/storage/:numPosition", (req, res) => {
         storePos.removeItem(req.params.numPosition)
       .then(err => {
           if (err) {
