@@ -1,6 +1,6 @@
 const ConfigDCS = require("./../_MongoDB/models/configDCS");
 //chargement exist
-module.exports = (router, console) =>{
+module.exports = (router, console) => {
     router.get("/config", (req, res) => {
         const name = req.query.name;
         const societe = req.query.societe;
@@ -19,7 +19,7 @@ module.exports = (router, console) =>{
             }).catch(err => {
                 if (err) throw err;
             });
-        }else {
+        } else {
             if (name != undefined) {
                 ConfigDCS.findOne({
                     name: name
@@ -33,15 +33,15 @@ module.exports = (router, console) =>{
                 }).catch(err => {
                     if (err) throw err;
                 });
-            }else {
+            } else {
                 if (societe != undefined) {
                     ConfigDCS.find({
                         societe: societe
                     }).then((configs) => {
                         if (configs != null) {
                             console.info(`Config get List ${societe}`);
-                            const arrayConfig =[];
-                            configs.forEach( item =>{
+                            const arrayConfig = [];
+                            configs.forEach(item => {
                                 arrayConfig.push(item.name);
                             });
                             res.json(arrayConfig);
@@ -51,7 +51,7 @@ module.exports = (router, console) =>{
                     }).catch(err => {
                         if (err) throw err;
                     });
-                }else {
+                } else {
                     ConfigDCS.find({}).then((configs) => {
                         if (configs != null) {
                             res.json(configs);

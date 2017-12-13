@@ -10,8 +10,7 @@ module.exports = function (num, action, storage) {
                 pos.codebarre.forEach(cb => {
                     if (cb.numero === num) {
                         //is all colis flashe today in this action ?
-                        let i = 0;
-                        let g = 0;
+                        let i = 0, g = 0;
                         let isNotSameDay = false;
                         pos.codebarre.forEach(colis => {
                             switch (action) {
@@ -24,11 +23,11 @@ module.exports = function (num, action, storage) {
                                     if (moment(colis.dateDechargement).isSame(moment().format(), "day")) {
                                         i++;
                                     }
-                                    if (moment(colis.dateDechargement).isSame(moment("1900-01-01").format(), "day")) {
-                                        isNotSameDay = true;
-                                    }
                                     if (colis.dateDechargement) {
                                         g++;
+                                        if (!moment(colis.dateDechargement).isSame(moment().format(), "day")) {
+                                            isNotSameDay = true;
+                                        }
                                     }
                                     break;
                                 case "inventaire":
@@ -44,6 +43,7 @@ module.exports = function (num, action, storage) {
                                 return (o.code.indexOf("COMPLET") > -1);
                             });
                             if (sch == undefined && isNotSameDay) {
+                                logger.DCS_Console.info(">> COMPLET OTHER DAY <<")
                                 postEventAnd("COMPLET", "", "", "", pos.idPosition);
                             }
                         }
