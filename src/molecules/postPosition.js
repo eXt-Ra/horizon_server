@@ -14,6 +14,7 @@ module.exports = (io,router, console, storage) => {
                     const newPos = new Position(pos);
                     newPos.save((err) => {
                         if (err){
+                            console.error(err);
                             // TODO: error position déja ajouter
                             console.info(`API addPos Position en double ${req.query.numPosition} / ${req.query.user}`);
                         }else {

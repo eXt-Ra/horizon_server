@@ -7,12 +7,15 @@ const storage = require("node-persist");
 const UserDcs = require("./_MongoDB/models/userdcs");
 app.use(helmet());
 
+const startMail = require("./mail/startMail");
+const errorMail = require("./mail/ErrorMail");
+const sendMail = require("./mail/nodemailer");
 const logger = require("./organisms/logger");
 
 //MongoDB
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb://RomainHori:Dealtis25-@localhost:27017/Horizon", { useMongoClient: true });
+mongoose.connect("mongodb://RomainHori:Dealtis25-@localhost:27017/Horizon", {useMongoClient: true});
 
 // Use native promises
 mongoose.Promise = Promise;
@@ -36,7 +39,7 @@ app.get("/setup", (req, res) => {
         active: true,
         type: "admin"
     });
-    Romain.save(function(err) {
+    Romain.save(function (err) {
         if (err) throw err;
 
         logger.log("User saved successfully");
@@ -48,7 +51,7 @@ app.get("/setup", (req, res) => {
 
 app.use(busboy());
 
-router.use(function(req, res, next) {
+router.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-access-token");
     if ("OPTIONS" == req.method) {
@@ -59,7 +62,7 @@ router.use(function(req, res, next) {
 });
 
 //Token Security for api
-router.use(function(req, res, next) {
+router.use(function (req, res, next) {
     UserApi.findOne({
         token: req.headers["x-access-token"]
     }, (err, user) => {
@@ -78,13 +81,13 @@ router.use(function(req, res, next) {
                 next();
                 if (user.nbRequest != undefined) {
                     user.nbRequest = user.nbRequest + 1;
-                }else {
+                } else {
                     user.nbRequest = 1;
                 }
-                user.save((err)=> {
+                user.save((err) => {
                     if (err) throw err;
                 });
-            }else {
+            } else {
                 return res.status(403).send("Utilisateur non actif");
             }
         }
@@ -102,15 +105,22 @@ storePos.init()
     .then(() => {
         logger.DCS_Console.info("[STORAGEPOS | UP]", "Storage up");
     }).catch(e => {
-        logger.DCS_Console.error("[STORAGEPOS | DOWN]", e);
-    });
+    logger.DCS_Console.error("[STORAGEPOS | DOWN]", e);
+    sendMail(errorMail(e))
+        .then(res => {
+            console.log(res.accepted);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+});
 
 require("./organisms/getPosition")(router, logger.DCS_Positions, storePos);
-require("./molecules/postPosition")(io,router, logger.DCS_Positions, storePos);
+require("./molecules/postPosition")(io, router, logger.DCS_Positions, storePos);
 require("./organisms/apiStore")(router, logger.DCS_Console, storePos);
 require("./organisms/apiMongo")(router);
 require("./molecules/getSalarie")(router, logger.DCS_Salarie);
-require("./molecules/logoutSalarie")(router,logger.DCS_Salarie, io);
+require("./molecules/logoutSalarie")(router, logger.DCS_Salarie, io);
 require("./molecules/requestToken")(router, logger.DCS_Console);
 require("./molecules/getEvents")(router);
 require("./molecules/postImage")(router, logger.DCS_Image);
@@ -121,7 +131,7 @@ require("./organisms/getInfoGroupage")(router);
 require("./organisms/getPosGroupage")(router);
 
 require("./molecules/createChargement")(router, logger.DCS_Positions);
-require("./molecules/clotureChargement")(router,logger.DCS_Positions, io);
+require("./molecules/clotureChargement")(router, logger.DCS_Positions, io);
 
 require("./molecules/chargementExist")(router);
 require("./molecules/userInChargement")(router);
@@ -161,16 +171,12 @@ UserDcs.find({}, (err, users) => {
 });
 
 
-
 logger.DCS_Console.info(`[START] Magic happens on port ${port}`);
 
-// const startMail = require("./mail/startMail");
-// const sendMail = require("./mail/nodemailer");
-//
 // sendMail(startMail)
-// .then(res => {
-//     console.log(res.accepted);
-// })
-// .catch(err =>{
-//     console.log(err);
-// });
+//     .then(res => {
+//         console.log(res.accepted);
+//     })
+//     .catch(err => {
+//         console.log(err);
+//     });

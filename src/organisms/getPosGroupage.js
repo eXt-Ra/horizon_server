@@ -2,6 +2,7 @@ const sql = require("mssql");
 const conn = require("../conn");
 const moment = require("moment");
 const getColisProdTable = require("../molecules/getColisProdTable");
+const getEventProd = require("../molecules/getEventProd");
 
 module.exports = (router) => {
     router.get("/posgroupage/:numero", (req, res) => {
@@ -50,8 +51,12 @@ module.exports = (router) => {
                 promiseQ.push( new Promise(resolve =>{
                     getColisProdTable(pos.idPosition).then(codebarre => {
                         pos.codebarre = codebarre;
-                        resolve();
+                        getEventProd(pos.idPosition).then( events =>{
+                            pos.evenement = events;
+                            resolve();
+                        });
                     })
+
                 }))
 
             });

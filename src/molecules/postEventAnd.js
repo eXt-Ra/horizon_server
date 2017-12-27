@@ -1,7 +1,7 @@
 const request = require("request");
 const moment = require("moment");
 
-module.exports = (codeEvent,libEvent, remarque, user, idPosition) => {
+module.exports = (codeEvent,libEvent, remarque, user, idPosition, storage) => {
     return new Promise((resolve, reject) => {
         const options = {
             method: "POST",
@@ -35,6 +35,23 @@ module.exports = (codeEvent,libEvent, remarque, user, idPosition) => {
             if (error){
                 reject(error);
             }else {
+                if(storage != null){
+                    const sch = storage.values().find((o) => {
+                        return o.idPosition == idPosition;
+                    });
+
+                    if (sch != undefined) {
+                        sch.evenement.push({
+                            "information": "",
+                            "remarque": remarque,
+                            "date": moment().format(),
+                            "libelle": libEvent,
+                            "code": codeEvent,
+                            "source": "DCS"
+                        });
+                        storage.setItem(sch.numPosition, sch);
+                    }
+                }
                 resolve(body);
             }
         });

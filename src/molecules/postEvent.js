@@ -5,7 +5,7 @@ const traitColis = require("./traitColis");
 module.exports = (router, console, storage) => {
     //POST EVENT
     router.post("/event", function (req, res) {
-        postEventAnd(req.query.codeEvent, req.query.libEvent, req.query.remarque, req.query.user, req.query.idPosition)
+        postEventAnd(req.query.codeEvent, req.query.libEvent, req.query.remarque, req.query.user, req.query.idPosition, null)
             .then((data) => {
                 console.info(`Event post successfully ${data}`, {
                     user: req.query.user,
@@ -17,32 +17,26 @@ module.exports = (router, console, storage) => {
             console.error(err);
             res.status(500).send(err);
         });
-        const sch = storage.values().find((o) => {
-            return o.idPosition == req.query.idPosition;
-        });
 
-
-        if (sch != undefined) {
-            sch.evenement.push({
-                "information": "",
-                "remarque": req.query.remarque,
-                "date": moment().format(),
-                "libelle": req.query.libEvent,
-                "code": req.query.codeEvent,
-                "source": "DCS"
+        if (storage != null) {
+            const sch = storage.values().find((o) => {
+                return o.idPosition == req.query.idPosition;
             });
 
-            storage.setItem(sch.numPosition, sch);
+            if (sch != undefined) {
+                sch.evenement.push({
+                    "information": "",
+                    "remarque": req.query.remarque,
+                    "date": moment().format(),
+                    "libelle": req.query.libEvent,
+                    "code": req.query.codeEvent,
+                    "source": "DCS"
+                });
 
-            if (req.query.codeEvent == "COMPLET") {
-                if (req.query.zone != undefined) {
-                    sch.codebarre.forEach(colis => {
-                        traitColis(colis.numero, "inventaire", req.query.user, req.query.zone, storage);
-                    });
-                } else {
-                    sch.codebarre.forEach(colis => {
-                        traitColis(colis.numero, "dechargement", req.query.user, "", storage);
-                    });
+                storage.setItem(sch.numPosition, sch);
+
+                if (req.query.codeEvent == "COMPLET") {
+                    traitColis(colis.numero, req.query.action, req.query.user, req.query.zone, storage);
                 }
             }
         }

@@ -17,10 +17,15 @@ module.exports = (router) => {
                     Position.findOne({
                         numPosition: pos
                     }).then(item => {
-                        positions.push(item);
-                        callback();
+                        if (item != null){
+                            positions.push(item);
+                            callback();
+                        }else{
+                            callback();
+                        }
                     });
                 }, () => {
+                    console.log(positions);
                     const orderPositions = positions.sort((a, b) => {
                         return a.ordrePosition - b.ordrePosition;
                     });

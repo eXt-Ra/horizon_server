@@ -14,7 +14,7 @@ module.exports = function (router, storage) {
                                 console.log(pos.idPosition);
                                 console.log(event.code);
                                 console.log(event.date);
-                                postEventAnd(event.code, "", "", "", pos.idPosition);
+                                postEventAnd(event.code, "", "", "", pos.idPosition,storage);
                             }
                         }
 

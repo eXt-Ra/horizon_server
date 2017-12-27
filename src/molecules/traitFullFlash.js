@@ -23,7 +23,7 @@ module.exports = function (num, action, storage) {
                                     if (moment(colis.dateDechargement).isSame(moment().format(), "day")) {
                                         i++;
                                     }
-                                    if (colis.dateDechargement) {
+                                    if (!moment(colis.dateDechargement).isSame('1900-01-01', 'day')) {
                                         g++;
                                         if (!moment(colis.dateDechargement).isSame(moment().format(), "day")) {
                                             isNotSameDay = true;
@@ -43,8 +43,8 @@ module.exports = function (num, action, storage) {
                                 return (o.code.indexOf("COMPLET") > -1);
                             });
                             if (sch == undefined && isNotSameDay) {
-                                logger.DCS_Console.info(">> COMPLET OTHER DAY <<")
-                                postEventAnd("COMPLET", "", "", "", pos.idPosition);
+                                logger.DCS_Console.info(">> NOT PROD COMPLET OTHER DAY <<");
+                                postEventAnd("COMPLET", "", "", "", pos.idPosition, storage);
                             }
                         }
 
@@ -53,8 +53,25 @@ module.exports = function (num, action, storage) {
                                 case "chargement":
                                     //si EventDoneAt not à la date du jours ou inexistant > faire l'event
                                     if (pos.ChargementEventDoneAt == undefined || !(moment(pos.ChargementEventDoneAt).isSame(moment().format(), "day"))) {
-                                        pos.ChargementEventDoneAt = moment().format();
-                                        // TODO creation de l'event
+                                        const sch = pos.evenement.find((o) => {
+                                            return o.source == "DCS" && (o.code.indexOf("EXP") > -1);
+                                        });
+                                        if (sch == undefined) {
+                                            setTimeout(() => {
+                                                storage.values().forEach(pos => {
+                                                    pos.codebarre.forEach(cb => {
+                                                        if (cb.numero === num) {
+                                                            const sch = pos.evenement.find((o) => {
+                                                                return o.source == "DCS" && (o.code.indexOf("EXP") > -1);
+                                                            });
+                                                            if (sch == undefined) {
+                                                                postEventAnd("EXPCFM", "", "", "", pos.idPosition, storage);
+                                                            }
+                                                        }
+                                                    });
+                                                });
+                                            }, 120000);
+                                        }
                                         logger.DCS_Positions.info(`Event full ${action} for ${num}`);
                                     } else {
                                         logger.DCS_Positions.info(`Event full ${action} already done today for ${num}`);
@@ -78,14 +95,13 @@ module.exports = function (num, action, storage) {
                                                                 return o.source == "DCS" && (o.code.indexOf("AAR") > -1);
                                                             });
                                                             if (sch == undefined) {
-                                                                postEventAnd("AARCFM", "", "", "", pos.idPosition);
+                                                                postEventAnd("AARCFM", "", "", "", pos.idPosition, storage);
                                                             }
                                                         }
                                                     });
                                                 });
                                             }, 120000);
                                         }
-
                                         logger.DCS_Positions.info(`Event full ${action} for ${num}`);
                                     } else {
                                         logger.DCS_Positions.info(`Event full ${action} already done today for ${num}`);
@@ -108,7 +124,7 @@ module.exports = function (num, action, storage) {
                                                                 return o.source == "DCS" && (o.code.indexOf("AAR") > -1);
                                                             });
                                                             if (sch == undefined) {
-                                                                postEventAnd("AARCFM", "", "", "", pos.idPosition);
+                                                                postEventAnd("AARCFM", "", "", "", pos.idPosition, storage);
                                                             }
                                                         }
                                                     });
