@@ -20,7 +20,7 @@ module.exports = (router, console, io) =>{
                 console.info(`CHA.Cloture Cloture de  ${req.params.token} / ${req.query.user}`);
 
                 const data = [];
-                JSON.parse(req.query.commande).forEach(pos =>{
+                req.body.forEach(pos =>{
                     const newdata = {
                         OTSID: pos.idPosition,
                         OTSNUM: pos.numPosition
@@ -67,6 +67,8 @@ module.exports = (router, console, io) =>{
                     }
                 });
 
+            }else {
+                res.status(404).send("Chargement inconnu");
             }
         }).catch(err => {
             if (err) throw err;

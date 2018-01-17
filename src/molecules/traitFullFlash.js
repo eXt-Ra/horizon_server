@@ -95,6 +95,19 @@ module.exports = function (num, action, storage) {
                                                                 return o.source == "DCS" && (o.code.indexOf("AAR") > -1);
                                                             });
                                                             if (sch == undefined) {
+                                                                const search = storage.values().find((o) => {
+                                                                    return o.idPosition == pos.idPosition;
+                                                                });
+
+                                                                search.evenement.push({
+                                                                    "information": "",
+                                                                    "remarque": "",
+                                                                    "date": moment().format(),
+                                                                    "libelle": "",
+                                                                    "code": "AARCFM",
+                                                                    "source": "DCS"
+                                                                });
+                                                                storage.setItem(search.numPosition, search);
                                                                 postEventAnd("AARCFM", "", "", "", pos.idPosition, storage);
                                                             }
                                                         }

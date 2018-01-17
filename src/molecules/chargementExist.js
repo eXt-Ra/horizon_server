@@ -25,7 +25,6 @@ module.exports = (router) => {
                         }
                     });
                 }, () => {
-                    console.log(positions);
                     const orderPositions = positions.sort((a, b) => {
                         return a.ordrePosition - b.ordrePosition;
                     });

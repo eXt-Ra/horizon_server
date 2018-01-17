@@ -3,6 +3,7 @@ const express = require("express");
 const helmet = require("helmet");
 const app = express();
 const busboy = require("connect-busboy");
+const bodyParser = require('body-parser');
 const storage = require("node-persist");
 const UserDcs = require("./_MongoDB/models/userdcs");
 app.use(helmet());
@@ -12,10 +13,10 @@ const errorMail = require("./mail/ErrorMail");
 const sendMail = require("./mail/nodemailer");
 const logger = require("./organisms/logger");
 
+require("./connmongo")();
+
 //MongoDB
 const mongoose = require("mongoose");
-
-mongoose.connect("mongodb://RomainHori:Dealtis25-@localhost:27017/Horizon", {useMongoClient: true});
 
 // Use native promises
 mongoose.Promise = Promise;
@@ -50,6 +51,8 @@ app.get("/setup", (req, res) => {
 });
 
 app.use(busboy());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 router.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -153,9 +156,15 @@ require("./organisms/logAPI")(io, logger);
 
 require("./molecules/resendEventDay")(router, storePos);
 
+require("./molecules/requestDcsLastVersion")(router, logger.DCS_Console);
 
 app.use("/dashboard_dcs", express.static("dashboard/dcs"));
 app.use("/dms_api", express.static("doc/build"));
+app.get("/apk/dcs-apk/", (req, res) => {
+    console.log("dl last version");
+    const file = __dirname + '/apk/dcs.apk';
+    res.download(file);
+});
 app.use("/api", router);
 app.listen(port);
 

@@ -36,7 +36,9 @@ module.exports = (router, console, storage) => {
                 storage.setItem(sch.numPosition, sch);
 
                 if (req.query.codeEvent == "COMPLET") {
-                    traitColis(colis.numero, req.query.action, req.query.user, req.query.zone, storage);
+                    sch.codebarre.forEach( colis => {
+                        traitColis(colis.numero, req.query.action, req.query.user, req.query.zone, storage);
+                    });
                 }
             }
         }
