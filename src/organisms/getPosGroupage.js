@@ -37,7 +37,8 @@ module.exports = (router) => {
                         on voyid=otpvoyid                      
                         inner join ordre as POS
                         on otpotsid = otsid                   
-                        where OTPTRSCODE<>'RAM' and  voybdx = @num`,
+                        where OTPTRSCODE<>'RAM' and  voybdx = @num
+                        order by OTPMANVOYPOS`,
                     (err, recordset) => {
                         if (err) {
                             reject(err);
