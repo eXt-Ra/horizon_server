@@ -1,13 +1,13 @@
 const postEventAnd = require("./postEventAnd");
 const moment = require("moment");
-const traitColis = require("./traitColis");
+const traitColisComplet = require("./traitComplet/traitColisComplet");
 
 module.exports = (router, console, storage) => {
     //POST EVENT
     router.post("/event", function (req, res) {
         postEventAnd(req.query.codeEvent, req.query.libEvent, req.query.remarque, req.query.user, req.query.idPosition, null)
             .then((data) => {
-                console.info(`Event post successfully ${data}`, {
+                console.info(`Event post successfully ${data} `, {
                     user: req.query.user,
                     idPosition: req.query.idPosition,
                     codeEvent: req.query.codeEvent
@@ -22,7 +22,6 @@ module.exports = (router, console, storage) => {
             const sch = storage.values().find((o) => {
                 return o.idPosition == req.query.idPosition;
             });
-
             if (sch != undefined) {
                 sch.evenement.push({
                     "information": "",
@@ -30,15 +29,15 @@ module.exports = (router, console, storage) => {
                     "date": moment().format(),
                     "libelle": req.query.libEvent,
                     "code": req.query.codeEvent,
-                    "source": "DCS"
+                    "source": "DCS",
+                    "user": req.query.user
                 });
-
                 storage.setItem(sch.numPosition, sch);
-
                 if (req.query.codeEvent == "COMPLET") {
-                    sch.codebarre.forEach( colis => {
-                        traitColis(colis.numero, req.query.action, req.query.user, req.query.zone, storage);
-                    });
+                    traitColisComplet(sch.numPosition, req.query.action, req.query.user, req.query.zone, storage, req.query.societe)
+                    // sch.codebarre.forEach( colis => {
+                    //     traitColis(colis.numero, req.query.action, req.query.user, req.query.zone, storage, req.query.societe);
+                    // });
                 }
             }
         }

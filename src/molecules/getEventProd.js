@@ -5,6 +5,7 @@ module.exports = function(idPosition) {
         new sql.Request(conn)
             .input("idPosition", sql.Int, idPosition)
             .query(`select
+                    OTEQUIC as eventuser,
                     OTETEVCODE as code,
                     OTETEVLIBCL1 as libelle,
                     OTEDATE as date,

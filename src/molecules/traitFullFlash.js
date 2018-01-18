@@ -3,7 +3,7 @@ const moment = require("moment");
 const postEventAnd = require("./postEventAnd");
 const logger = require("./../organisms/logger");
 
-module.exports = function (num, action, storage) {
+module.exports = function (num, action, storage, user) {
     return new Promise((resolve, reject) => {
         try {
             storage.values().forEach(pos => {
@@ -44,6 +44,16 @@ module.exports = function (num, action, storage) {
                             });
                             if (sch == undefined && isNotSameDay) {
                                 logger.DCS_Console.info(">> NOT PROD COMPLET OTHER DAY <<");
+                                pos.evenement.push({
+                                    "information": "",
+                                    "remarque": "",
+                                    "date": moment().format(),
+                                    "libelle": "",
+                                    "code": "COMPLET",
+                                    "source": "DCS",
+                                    "eventuser": user
+                                });
+                                storage.setItem(pos.numPosition, pos);
                                 postEventAnd("COMPLET", "", "", "", pos.idPosition, storage);
                             }
                         }
@@ -64,8 +74,17 @@ module.exports = function (num, action, storage) {
                                                             const sch = pos.evenement.find((o) => {
                                                                 return o.source == "DCS" && (o.code.indexOf("EXP") > -1);
                                                             });
+                                                            pos.evenement.push({
+                                                                "information": "",
+                                                                "remarque": "",
+                                                                "date": moment().format(),
+                                                                "libelle": "",
+                                                                "code": "EXPCFM",
+                                                                "source": "DCS",
+                                                                "eventuser": user
+                                                            });
                                                             if (sch == undefined) {
-                                                                postEventAnd("EXPCFM", "", "", "", pos.idPosition, storage);
+                                                                postEventAnd("EXPCFM", "", "", user, pos.idPosition, storage);
                                                             }
                                                         }
                                                     });
@@ -78,42 +97,47 @@ module.exports = function (num, action, storage) {
                                     }
                                     break;
                                 case "dechargement":
+                                    debugger;
                                     //si EventDoneAt not à la date du jours ou inexistant > faire l'event
                                     if (pos.DechargementEventDoneAt == undefined || !(moment(pos.DechargementEventDoneAt).isSame(moment().format(), "day"))) {
                                         pos.DechargementEventDoneAt = moment().format();
                                         //si il a eu un autre event ne rien faire
+                                        debugger;
                                         const sch = pos.evenement.find((o) => {
                                             return o.source == "DCS" && (o.code.indexOf("AAR") > -1);
                                         });
+
                                         if (sch == undefined) {
                                             //timeout si la mise du arrcfm en cas d'avarie sur le dernier colis
-                                            setTimeout(() => {
-                                                storage.values().forEach(pos => {
-                                                    pos.codebarre.forEach(cb => {
-                                                        if (cb.numero === num) {
-                                                            const sch = pos.evenement.find((o) => {
-                                                                return o.source == "DCS" && (o.code.indexOf("AAR") > -1);
-                                                            });
-                                                            if (sch == undefined) {
-                                                                const search = storage.values().find((o) => {
-                                                                    return o.idPosition == pos.idPosition;
-                                                                });
+                                            // setTimeout(() => {
+                                            storage.values().forEach(position => {
+                                                position.codebarre.forEach(cb => {
+                                                    if (cb.numero === num) {
+                                                        const sch = position.evenement.find((o) => {
+                                                            return o.source == "DCS" && (o.code.indexOf("AAR") > -1);
+                                                        });
+                                                        if (sch == undefined) {
+                                                            // const search = storage.values().find((o) => {
+                                                            //     return o.idPosition == position.idPosition;
+                                                            // });
 
-                                                                search.evenement.push({
-                                                                    "information": "",
-                                                                    "remarque": "",
-                                                                    "date": moment().format(),
-                                                                    "libelle": "",
-                                                                    "code": "AARCFM",
-                                                                    "source": "DCS"
-                                                                });
-                                                                storage.setItem(search.numPosition, search);
-                                                                postEventAnd("AARCFM", "", "", "", pos.idPosition, storage);
-                                                            }
+                                                            position.evenement.push({
+                                                                "information": "",
+                                                                "remarque": "",
+                                                                "date": moment().format(),
+                                                                "libelle": "",
+                                                                "code": "AARCFM",
+                                                                "source": "DCS",
+                                                                "eventuser": user
+                                                            });
+                                                            logger.DCS_Positions.info("hey");
+                                                            storage.setItem(position.numPosition, position);
+                                                            postEventAnd("AARCFM", "", "", user, position.idPosition, storage);
                                                         }
-                                                    });
+                                                    }
                                                 });
-                                            }, 120000);
+                                            });
+                                            // }, 120000);
                                         }
                                         logger.DCS_Positions.info(`Event full ${action} for ${num}`);
                                     } else {
@@ -137,7 +161,16 @@ module.exports = function (num, action, storage) {
                                                                 return o.source == "DCS" && (o.code.indexOf("AAR") > -1);
                                                             });
                                                             if (sch == undefined) {
-                                                                postEventAnd("AARCFM", "", "", "", pos.idPosition, storage);
+                                                                pos.evenement.push({
+                                                                    "information": "",
+                                                                    "remarque": "",
+                                                                    "date": moment().format(),
+                                                                    "libelle": "",
+                                                                    "code": "AARCFM",
+                                                                    "source": "DCS",
+                                                                    "eventuser": user
+                                                                });
+                                                                postEventAnd("AARCFM", "", "", user, pos.idPosition, storage);
                                                             }
                                                         }
                                                     });

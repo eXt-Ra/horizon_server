@@ -47,7 +47,8 @@ module.exports = (codeEvent,libEvent, remarque, user, idPosition, storage) => {
                             "date": moment().format(),
                             "libelle": libEvent,
                             "code": codeEvent,
-                            "source": "DCS"
+                            "source": "DCS",
+                            "eventuser": user
                         });
                         storage.setItem(sch.numPosition, sch);
                     }

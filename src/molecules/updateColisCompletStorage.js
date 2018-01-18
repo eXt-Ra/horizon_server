@@ -2,19 +2,18 @@ const moment = require("moment");
 const _ = require("lodash");
 const postEventAnd = require("./postEventAnd");
 
-module.exports = function (num, action, user, zone, storage) {
+module.exports = function (numPosition, action, user, zone, storage) {
     return new Promise((resolve, reject) => {
         try {
             storage.values().forEach(pos => {
-                pos.codebarre.forEach(cb => {
-                    if (cb.numero === num) {
+                if (pos.numPosition === numPosition) {
+                    pos.codebarre.forEach(cb => {
                         switch (action) {
                             case "chargement":
                                 cb.dateChargement = moment().format();
                                 cb.quiChargement = user;
                                 break;
                             case "dechargement":
-                                debugger;
                                 cb.dateDechargement = moment().format();
                                 cb.quiDechargement = user;
                                 cb.zoneDeQuai = zone;
@@ -40,10 +39,10 @@ module.exports = function (num, action, user, zone, storage) {
                                 cb.zoneDeQuai = zone;
                                 break;
                         }
-                        debugger;
-                        resolve(pos);
-                    }
-                });
+                    });
+                    debugger;
+                    resolve(pos);
+                }
             });
             resolve(undefined);
         } catch (e) {
