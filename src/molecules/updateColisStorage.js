@@ -14,7 +14,6 @@ module.exports = function (num, action, user, zone, storage) {
                                 cb.quiChargement = user;
                                 break;
                             case "dechargement":
-                                debugger;
                                 cb.dateDechargement = moment().format();
                                 cb.quiDechargement = user;
                                 cb.zoneDeQuai = zone;
@@ -40,7 +39,6 @@ module.exports = function (num, action, user, zone, storage) {
                                 cb.zoneDeQuai = zone;
                                 break;
                         }
-                        debugger;
                         resolve(pos);
                     }
                 });
