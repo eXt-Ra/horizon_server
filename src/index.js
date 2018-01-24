@@ -32,24 +32,6 @@ server.listen(8081);
 const port = process.env.PORT || 8080;
 const router = express.Router();
 
-app.get("/setup", (req, res) => {
-    var Romain = new UserApi({
-        name: "romain",
-        token: "w25K}54dkaE/[dgduVqcX9VicQF17u",
-        societe: "MJU39",
-        active: true,
-        type: "admin"
-    });
-    Romain.save(function (err) {
-        if (err) throw err;
-
-        logger.log("User saved successfully");
-        res.json({
-            success: true
-        });
-    });
-});
-
 app.use(busboy());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

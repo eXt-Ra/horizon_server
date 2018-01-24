@@ -1,10 +1,9 @@
 const ConfigDCS = require("./../_MongoDB/models/configDCS");
-const Config = require("./../_MongoDB/models/config");
 
 module.exports = (router, console) => {
     router.get("/copyConfigToConfigDcs", (req, res) => {
         console.info("Start COPY")
-        Config.find({}, (err, configs) => {
+        ConfigDCS.find({}, (err, configs) => {
             if (err) throw err;
             configs.forEach(conf => {
                 const newConfDcs = new ConfigDCS({

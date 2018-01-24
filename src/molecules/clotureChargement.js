@@ -35,6 +35,7 @@ module.exports = (router, console, io) =>{
                 const options = {
                     method: "POST",
                     url: "http://10.1.2.70/DCSAPP/api/creagrp",
+                    // url: "http://10.1.8.26:50537/api/creagrp",
                     headers: {
                         "content-type": "application/json"
                     },

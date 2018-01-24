@@ -32,7 +32,8 @@ const positionSchema = new Schema(
         codebarre: Array,
         societe: String,
         evenement: Array
-    });
+    },
+    { usePushEach: true });
 
 const Position = mongoose.model("Position", positionSchema);
 
